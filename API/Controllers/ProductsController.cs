@@ -2,8 +2,10 @@ using System.Net;
 using System.Net.Mime;
 using API.Dtos;
 using API.Errors;
+using API.Helpers;
 using AutoMapper;
 using Core.Entities;
+using Core.Specifications;
 using Infrastructure.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,12 +25,14 @@ namespace API.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(IReadOnlyList<ProductToReturnDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts([FromQuery] ProductSpecParams specParams)
         {
-            var products = await _productService.GetProductsWithBrandsAndTypesAsync();
+            var count = await _productService.CountAsync(specParams);
+            var products = await _productService.GetProductsWithBrandsAndTypesAsync(specParams);
             var productDtos = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+            var paging = new Pagination<ProductToReturnDto>(specParams.PageIndex, specParams.PageSize, count, productDtos);
 
-            return Ok(productDtos);
+            return Ok(paging);
         }
 
         [HttpGet("{id}")]

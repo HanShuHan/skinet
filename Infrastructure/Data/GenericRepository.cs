@@ -14,12 +14,17 @@ namespace Infrastructure.Data
             _context = context;
         }
 
+        public async Task<int> CountAsync(ISpecification<T> specification)
+        {
+            return await ApplySpecification(specification).CountAsync();
+        }
+
         public async Task<IReadOnlyList<T>> ListAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> ListWithSpecAsync(ISpecification<T> specification)
+        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).ToListAsync();
         }
@@ -29,12 +34,13 @@ namespace Infrastructure.Data
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> GetEntityWithSpecAsync(ISpecification<T> specification)
+        public async Task<T> GetEntityAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).FirstOrDefaultAsync();
         }
 
-        private IQueryable<T> ApplySpecification(ISpecification<T> specification) {
+        private IQueryable<T> ApplySpecification(ISpecification<T> specification)
+        {
             return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
         }
     }

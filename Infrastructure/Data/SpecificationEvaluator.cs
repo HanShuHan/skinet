@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class SpecificationEvaluator<T> where T : BaseEntity
+    public static class SpecificationEvaluator<T> where T : BaseEntity
     {
         public static IQueryable<T> GetQuery(IQueryable<T> inputQuery, ISpecification<T> specification)
         {
@@ -15,9 +15,38 @@ namespace Infrastructure.Data
                 query = query.Where(specification.Criteria);
             }
 
+            if (specification.OrderBy != null)
+            {
+                query = query.OrderBy(specification.OrderBy);
+            }
+
+            if (specification.OrderByDescending != null)
+            {
+                query = query.OrderByDescending(specification.OrderByDescending);
+            }
+
+            if (specification.ThenBys.Any())
+            {
+                var orderedQuery = (IOrderedQueryable<T>) query;
+
+                query = specification.ThenBys.Aggregate(orderedQuery, (current, thenBy) => current.ThenBy(thenBy));
+            }
+
+            if (specification.ThenByDescendings.Any())
+            {
+                var orderedQuery = (IOrderedQueryable<T>) query;
+
+                query = specification.ThenByDescendings.Aggregate(orderedQuery, (current, thenByDescending) => current.ThenByDescending(thenByDescending));
+            }
+
             if (specification.Includes.Any())
             {
                 query = specification.Includes.Aggregate(query, (current, include) => current.Include(include));
+            }
+
+            if (specification.IsPagingEnabled)
+            {
+                query = query.Skip(specification.Skip).Take(specification.Take);
             }
 
             return query;

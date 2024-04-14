@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Core.Entities;
-using Core.Interfaces;
 using Core.Specifications;
 using Infrastructure.Data.Repositories;
 
@@ -22,6 +17,13 @@ namespace Infrastructure.Data.Services
             _typeRepo = typeRepo;
         }
 
+        public async Task<int> CountAsync(ProductSpecParams specParams)
+        {
+            var spec = new ProductsCountSpecification(specParams);
+
+            return await _productRepo.CountAsync(spec);
+        }
+
         public async Task<IReadOnlyList<ProductBrand>> GetBrandsAsync()
         {
             return await _brandRepo.ListAllAsync();
@@ -36,7 +38,7 @@ namespace Infrastructure.Data.Services
         {
             var spec = new ProductsWithBrandsAndTypesSpecification(id);
 
-            return await _productRepo.GetEntityWithSpecAsync(spec);
+            return await _productRepo.GetEntityAsync(spec);
         }
 
         public async Task<IReadOnlyList<Product>> GetProductsAsync()
@@ -44,11 +46,11 @@ namespace Infrastructure.Data.Services
             return await _productRepo.ListAllAsync();
         }
 
-        public async Task<IReadOnlyList<Product>> GetProductsWithBrandsAndTypesAsync()
+        public async Task<IReadOnlyList<Product>> GetProductsWithBrandsAndTypesAsync(ProductSpecParams specParams)
         {
-            var spec = new ProductsWithBrandsAndTypesSpecification();
+            var spec = new ProductsWithBrandsAndTypesSpecification(specParams);
 
-            return await _productRepo.ListWithSpecAsync(spec);
+            return await _productRepo.ListAsync(spec);
         }
 
         public async Task<IReadOnlyList<ProductType>> GetTypesAsync()

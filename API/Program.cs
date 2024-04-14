@@ -44,6 +44,7 @@ app.MapGet("/weatherforecast", () =>
 .WithOpenApi();
 
 app.UseStaticFiles();
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 app.MapControllers();
 
