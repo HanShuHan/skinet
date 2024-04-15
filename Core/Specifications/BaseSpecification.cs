@@ -58,6 +58,20 @@ namespace Core.Specifications
 
         protected void ApplyPaging(int pageIndex, int pageSize)
         {
+            if (pageIndex < 1)
+            {
+                pageIndex = 1;
+            }
+
+            if (pageSize > ProductSpecParams.MaxPageSize || pageSize < 1)
+            {
+                pageSize = ProductSpecParams.MaxPageSize;
+            }
+            // else if (pageSize < 1)
+            // {
+            //     pageSize = 1;
+            // }
+
             IsPagingEnabled = true;
             Skip = pageSize * (pageIndex - 1);
             Take = pageSize;

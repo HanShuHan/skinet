@@ -1,0 +1,31 @@
+<div class="container d-flex">
+
+  <section class="col-3 me-4">
+
+    <app-product-search-side-bar/>
+
+  </section>
+
+  <section class="col-9">
+
+    <div class="d-flex justify-content-between mb-5">
+
+      <div>Showing<strong>{{products?.length || 0}}</strong>of<strong>{{ count }}</strong>results</div>
+
+      <app-product-search-bar/>
+
+    </div>
+
+    <div class="row row-cols-3 g-3">
+
+      <div class="col mb-3" *ngFor="let product of products">
+
+        <app-product-item [product]="product"/>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>
