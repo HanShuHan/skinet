@@ -1,15 +1,24 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ProductSearchBarComponent} from '../shop/product-search-bar/product-search-bar.component';
+import {PaginationModule} from "ngx-bootstrap/pagination";
+import {PagingHeaderComponent} from './paging-header/paging-header.component';
+import {NgIf} from "@angular/common";
+import {PagerComponent} from './pager/pager.component';
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
   declarations: [
+    PagingHeaderComponent,
+    PagerComponent
   ],
   imports: [
-    CommonModule
+    PaginationModule.forRoot(),
+    NgIf,
+    FormsModule
   ],
   exports: [
+    PagingHeaderComponent,
+    PagerComponent
   ]
 })
 export class SharedModule {

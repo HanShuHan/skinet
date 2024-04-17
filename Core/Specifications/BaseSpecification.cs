@@ -67,10 +67,6 @@ namespace Core.Specifications
             {
                 pageSize = ProductSpecParams.MaxPageSize;
             }
-            // else if (pageSize < 1)
-            // {
-            //     pageSize = 1;
-            // }
 
             IsPagingEnabled = true;
             Skip = pageSize * (pageIndex - 1);

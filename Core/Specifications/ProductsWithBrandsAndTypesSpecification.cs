@@ -24,7 +24,6 @@ namespace Core.Specifications
                 && (string.IsNullOrEmpty(specParams.Search) || p.Name.ToLower().Contains(specParams.Search.ToLower()))
             )
         {
-            OrderBy = p => p.Name; // default sort by prduct name
             // Apply sort
             if (!string.IsNullOrEmpty(specParams.Sort))
             {
@@ -37,8 +36,13 @@ namespace Core.Specifications
                         OrderByDescending = p => p.Price;
                         break;
                     default:
+                        OrderBy = p => p.Name;
                         break;
                 }
+            }
+            else
+            {
+                OrderBy = p => p.Name;
             }
             ApplyPaging(specParams.PageIndex, specParams.PageSize);
             AddInclude(p => p.ProductBrand);

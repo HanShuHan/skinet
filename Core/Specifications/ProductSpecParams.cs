@@ -1,6 +1,6 @@
 namespace Core.Specifications
 {
-    public class ProductSpecParams
+    public class  ProductSpecParams
     {
         // Filtering params
         public int? BrandId { get; set; }

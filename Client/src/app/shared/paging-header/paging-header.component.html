@@ -1,0 +1,23 @@
+<div *ngIf="totalItems >= 0 && pageSize > 0 && pageIndex > 0">
+
+  <div *ngIf="totalItems > 0; else noResults">
+    <span>
+      Showing
+      <strong>
+        {{ (pageIndex - 1) * pageSize + 1 }}
+        –
+        {{ totalItems > (pageIndex * pageSize) ? (pageIndex * pageSize) : totalItems }}
+      </strong>
+      of
+      <strong>{{ totalItems }}</strong>
+      results
+    </span>
+  </div>
+
+  <ng-template #noResults>
+    <div>
+      There are<strong> 0 </strong>results
+    </div>
+  </ng-template>
+
+</div>
