@@ -35,7 +35,7 @@ namespace API.Middleware
                 context.Response.StatusCode = (int)statusCode;
 
                 ApiExceptionResponse response = _env.IsDevelopment()
-                    ? new ApiExceptionResponse((int)statusCode, ex.Message, ex.StackTrace.ToString())
+                    ? new ApiExceptionResponse((int)statusCode, statusCode.ToString(), ex.Message, ex.StackTrace.ToString())
                     : new ApiExceptionResponse(statusCode);
 
                 var option = new JsonSerializerOptions(JsonSerializerDefaults.Web);

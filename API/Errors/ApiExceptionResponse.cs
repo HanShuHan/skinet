@@ -4,16 +4,19 @@ namespace API.Errors
 {
     public class ApiExceptionResponse : ApiResponse
     {
-        public string Detail { get; set; }
+        public string Details { get; set; }
 
-        public ApiExceptionResponse(HttpStatusCode httpStatusCode, string detail = null) : base(httpStatusCode)
+        public ApiExceptionResponse(HttpStatusCode httpStatusCode) : base(httpStatusCode)
+        { }
+
+        public ApiExceptionResponse(HttpStatusCode httpStatusCode, string message = null, string detailMessage = null, string details = null) : base(httpStatusCode, message, detailMessage)
         {
-            Detail = detail;
+            Details = details;
         }
 
-        public ApiExceptionResponse(int statusCode, string message = null, string detail = null) : base(statusCode, message)
+        public ApiExceptionResponse(int statusCode, string message = null, string detailMessage = null, string details = null) : base(statusCode, message, detailMessage)
         {
-            Detail = detail;
+            Details = details;
         }
     }
 }

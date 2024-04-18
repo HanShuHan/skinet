@@ -1,0 +1,49 @@
+<div class="container col">
+
+  <div class="row">
+
+    <button class="col-3 btn btn-outline-primary mx-4 mb-4" (click)="get400BadRequestError()">
+
+      Test 400 Bad Request Error
+
+    </button>
+
+    <button class="col-3 btn btn-outline-primary mx-4 mb-4" (click)="get404ProductNotFoundError()">
+
+      Test 404 Not Product Found Error
+
+    </button>
+
+    <button class="col-3 btn btn-outline-primary mx-4 mb-4" (click)="get404PageNotFoundError()">
+
+      Test 404 Page Not Found Error
+
+    </button>
+
+    <button class="col-3 btn btn-outline-primary mx-4 mb-4" (click)="get500InternalServerError()">
+
+      Test 500 Internal Server Error
+
+    </button>
+
+  </div>
+
+  <ng-container *ngIf="errMessages && errMessages.length > 0">
+
+    <div>
+
+      <ul>
+
+        <li class="text-danger" *ngFor="let errMessage of errMessages">
+
+          {{ errMessage }}
+
+        </li>
+
+      </ul>
+
+    </div>
+
+  </ng-container>
+
+</div>

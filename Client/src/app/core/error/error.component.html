@@ -1,0 +1,15 @@
+<div class="container">
+
+  <h2 class="mb-4 text-danger-emphasis">{{ error.statusCode }} – {{ error.message }}</h2>
+
+  <ng-container *ngIf="error.details">
+
+    <h4 class="mb-4">Stack Trace</h4>
+
+    <h6 class="mb-2 text-secondary">{{ error.detailMessage }}</h6>
+
+    <code class="code">{{ error.details }}</code>
+
+  </ng-container>
+
+</div>

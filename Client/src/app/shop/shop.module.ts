@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {ShopComponent} from './shop.component';
 import {ProductItemComponent} from './product-item/product-item.component';
 import {FormsModule} from "@angular/forms";
@@ -19,6 +19,7 @@ import {ShopRoutingModule} from "./shop-routing.module";
     FormsModule,
     SharedModule,
     ShopRoutingModule,
+    NgOptimizedImage,
   ]
 })
 export class ShopModule {

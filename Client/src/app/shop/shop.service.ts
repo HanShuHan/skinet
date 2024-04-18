@@ -7,33 +7,34 @@ import {Brand} from "../shared/models/brand";
 import {Type} from "../shared/models/type";
 import {ProductParams} from "../shared/models/product-params";
 import {ShopComponent, SORT_OPTIONS} from "./shop.component";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShopService {
 
-  private baseUrl: string = 'https://localhost:5001/api/products';
+  private baseUrl: string = environment.apiUrl + environment.productsUrl;
 
   constructor(private http: HttpClient) {
   }
 
   public getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.baseUrl}/${id}`);
+    return this.http.get<Product>(this.baseUrl + id);
   }
 
   public getProducts(productParams: ProductParams): Observable<Pagination<Product[]>> {
     const params = this.genHttpParams(productParams);
 
-    return this.http.get<Pagination<Product[]>>(`${this.baseUrl}`, {params: params});
+    return this.http.get<Pagination<Product[]>>(this.baseUrl, {params: params});
   }
 
   public getBrands(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(`${this.baseUrl}/brands`);
+    return this.http.get<Brand[]>(this.baseUrl + 'brands');
   }
 
   public getTypes(): Observable<Type[]> {
-    return this.http.get<Type[]>(`${this.baseUrl}/types`);
+    return this.http.get<Type[]>(this.baseUrl + 'types');
   }
 
   private genHttpParams(productParams: ProductParams): HttpParams {
