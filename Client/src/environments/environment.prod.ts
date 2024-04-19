@@ -12,5 +12,7 @@ export const environment = {
     disableTimeOut: true,
     easeTime: 500,
     positionClass: 'toast-bottom-right',
-  }
+    home: 'Home'
+  },
+  home: 'Home'
 };

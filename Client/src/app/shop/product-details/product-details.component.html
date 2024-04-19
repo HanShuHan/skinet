@@ -13,23 +13,23 @@
 
     <h2 class="mb-4">{{ product.name | uppercase }}</h2>
 
-    <p class="mb-4">{{product.price | currency: 'USD': 'symbol': '.1-2'}}</p>
+    <p class="mb-4 fs-4">{{product.price | currency: 'USD': 'symbol': '.1-2'}}</p>
 
     <div class="d-flex align-items-center mb-4">
 
       <a href=""><i class="fa fa-minus-circle text-warning fa-2x me-4"></i></a>
 
-      <span class="me-4"><strong>2</strong></span>
+      <span class="me-4 fs-5"><strong>2</strong></span>
 
       <a href=""><i class="fa fa-plus-circle text-warning fa-2x me-4"></i></a>
 
-      <a href="" class="btn btn-outline-success ms-2">Add to Cart</a>
+      <a href="" class="btn btn-outline-success ms-2 fs-6">Add to Cart</a>
 
     </div>
 
-    <h5>Description</h5>
+    <h4>Description</h4>
 
-    <p>{{product.description}}</p>
+    <p class="fs-6">{{product.description}}</p>
 
   </div>
 

@@ -5,6 +5,8 @@ import {Brand} from "../shared/models/brand";
 import {Type} from "../shared/models/type";
 import {Option} from "../shared/models/option";
 import {ProductParams} from "../shared/models/product-params";
+import {NgxSpinnerService} from "ngx-spinner";
+import {Router} from "@angular/router";
 
 export const SORT_OPTIONS: Option[] = [
   {name: 'Alphabetical', value: 'name'},
@@ -27,7 +29,7 @@ export class ShopComponent implements OnInit {
   types: Type[] = [OPTION_ALL];
   sortOptions: Option[] = SORT_OPTIONS;
 
-  constructor(private shopService: ShopService) {
+  constructor(private router: Router, private shopService: ShopService, private spinnerService: NgxSpinnerService) {
   }
 
   ngOnInit(): void {
@@ -44,7 +46,7 @@ export class ShopComponent implements OnInit {
           this.productParams.totalItems = response.count;
           this.productParams.pageSize = response.pageSize;
         },
-        error: err => console.log(err),
+        error: err => console.log(err)
       });
   }
 

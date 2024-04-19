@@ -1,7 +1,18 @@
-<div class="container d-flex flex-column">
+<div class="d-flex flex-column">
+
+  <ngx-spinner name="loading"
+               type="ball-climbing-dot"
+               size="medium"
+               bdColor="rgba(0, 0, 0, 0.3)"
+  >
+    <p class="text-white">Loading...</p>
+
+  </ngx-spinner>
 
   <app-nav-bar class="mb-5"/>
 
-  <router-outlet class="my-5"/>
+  <app-section-header class="mt-5"/>
+
+  <router-outlet class="mt-5"/>
 
 </div>
