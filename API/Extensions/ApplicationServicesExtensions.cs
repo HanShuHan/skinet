@@ -4,6 +4,7 @@ using Infrastructure.Data.Repositories;
 using Infrastructure.Data.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace API.Extensions
 {
@@ -11,14 +12,20 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddEndpointsApiExplorer();
+            services.AddEndpointsApiExplorer(); 
             services.AddSwaggerGen();
             services.AddDbContext<StoreContext>(option =>
             {
                 option.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
+            services.AddSingleton<IConnectionMultiplexer>(provider =>
+            { 
+                var option = ConfigurationOptions.Parse(config.GetConnectionString("Redis"));
+                return ConnectionMultiplexer.Connect(option);
+            });
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<ApiBehaviorOptions>(options =>
             {
@@ -39,7 +46,7 @@ namespace API.Extensions
                 policy => policy
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .WithOrigins("https://localhost:4200")
+                    .WithOrigins(["https://localhost:4200"])
             ));
 
             return services;
