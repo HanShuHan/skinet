@@ -8,6 +8,8 @@ import {environment} from "../environments/environment";
 const routes: Routes = [
   {path: '', component: HomeComponent, data: {breadcrumb: environment.home}},
   {path: 'shop', loadChildren: () => import('./shop/shop.module').then(provider => provider.ShopModule)},
+  {path: 'basket', loadChildren: () => import('./basket/basket.module').then(provider => provider.BasketModule)},
+  {path: 'checkout', loadChildren: () => import('./checkout/checkout.module').then(provider => provider.CheckoutModule)},
   {
     path: 'error', children: [
       {path: '', component: TestErrorComponent},

@@ -7,3 +7,18 @@ export interface Product {
   productType: string;
   productBrand: string;
 }
+
+export interface Brand {
+  id: number;
+  name: string;
+}
+
+export interface Type {
+  id: number;
+  name: string;
+}
+
+export interface Option {
+  name: string;
+  value: string;
+}

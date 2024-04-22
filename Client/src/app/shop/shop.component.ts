@@ -1,9 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Product} from "../shared/models/product";
+import {Brand, Option, Product, Type} from "../shared/models/product";
 import {ShopService} from "./shop.service";
-import {Brand} from "../shared/models/brand";
-import {Type} from "../shared/models/type";
-import {Option} from "../shared/models/option";
 import {ProductParams} from "../shared/models/product-params";
 import {NgxSpinnerService} from "ngx-spinner";
 import {Router} from "@angular/router";

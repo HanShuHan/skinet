@@ -1,0 +1,200 @@
+<div class="container" *ngIf="(basketService.basketSource$ | async) as basket">
+
+  <h2 *ngIf="basket.items.length === 0; else basketDetails">
+
+    There are no items in your basket
+
+  </h2>
+
+  <ng-template #basketDetails>
+
+    <div class="d-flex row-cols-2 justify-content-between">
+
+      <table class=" table-responsive align-middle text-center col me-2">
+
+        <thead class="text-uppercase">
+
+        <tr>
+
+          <th>Product</th>
+
+          <th></th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr *ngFor="let item of basket.items"
+            class="border-bottom border-secondary"
+        >
+
+          <td>
+            <a class="text-decoration-none"
+               routerLink="/shop/{{item.id}}"
+            >
+              <img [ngSrc]="item.pictureUrl" [alt]="item.productName"
+                   width="100" height="100"
+                   class="mw-100 mh-100 img-fluid text-decoration-none"
+              >
+            </a>
+          </td>
+
+          <td class="text-start">
+
+            <a class="text-decoration-none"
+               routerLink="/shop/{{item.id}}"
+            >
+              <h4 class="text-primary fw-bold mb-3">
+                {{ item.productName }}
+              </h4>
+            </a>
+
+            <h5>Brand: {{ item.brand }}</h5>
+
+            <h5>Type: {{ item.type }}</h5>
+
+          </td>
+
+        </tr>
+
+        </tbody>
+
+      </table>
+
+      <table class=" table-responsive align-middle text-center col">
+
+        <thead class="text-uppercase">
+
+        <tr>
+
+          <th>Price</th>
+
+          <th>Quantity</th>
+
+          <th>Total</th>
+
+          <th>Remove</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr class="border-bottom border-secondary"
+            *ngFor="let item of basket.items"
+        >
+
+          <td class="fs-5">
+            <strong>
+              {{ item.price | currency :'USD' : 'symbol' : '.1-2' }}
+            </strong>
+          </td>
+
+          <td class="fs-5 align-middle">
+
+            <div class="d-flex align-items-center justify-content-between">
+
+              <a (click)="minusQuantity(item)">
+                <i class="fa fa-minus-circle text-warning fa-2x"></i>
+              </a>
+
+              <strong>{{ item.quantity }}</strong>
+
+              <a (click)="plusQuantity(item)">
+                <i class="fa fa-plus-circle text-warning fa-2x"></i>
+              </a>
+
+            </div>
+
+          </td>
+
+          <td class="fs-5">
+            <strong>
+              {{ item.price * item.quantity | currency :'USD' : 'symbol' : '.1-2' }}
+            </strong>
+          </td>
+
+          <td>
+
+            <a (click)="confirmDelete(item)">
+              <i class="fa fa-trash text-danger fa-2x"></i>
+            </a>
+
+          </td>
+
+        </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <div class="d-flex mt-5 ms-3 text-center" *ngIf="(basketService.subtotalsSource$ | async) as subTotals">
+
+      <div class="col-6 offset-6">
+
+        <h4 class="text-uppercase bg-warning fw-bold p-1 mb-4">
+
+          Order Summary
+
+        </h4>
+
+        <ul class="list-unstyled">
+
+          <li class="d-flex justify-content-between p-2">
+
+            <h4>Subtotal</h4>
+
+            <h4>
+
+              {{ subTotals.subTotal | currency : 'USD' : 'symbol' : '.1-2' }}
+
+            </h4>
+
+          </li>
+
+          <li class="d-flex justify-content-between p-2">
+
+            <h4>Tax <span class="text-info">({{ TAX_RATE * 100 | number : '.1-2' }}%)</span></h4>
+
+            <h4>{{ subTotals.tax  | currency : 'USD' : 'symbol' : '.1-2' }}</h4>
+
+          </li>
+
+          <li class="d-flex justify-content-between p-2 border-bottom border-info">
+
+            <h4>Shipping</h4>
+
+            <h4>{{ subTotals.shipping | currency : 'USD' : 'symbol' : '.1-2' }}</h4>
+
+          </li>
+
+          <li class="d-flex justify-content-between p-2">
+
+            <h4>Total</h4>
+
+            <h4>{{ subTotals.getTotal() | currency : 'USD' : 'symbol' : '.1-2' }}</h4>
+
+          </li>
+
+        </ul>
+
+        <button class="btn btn-outline-success w-100 fs-4"
+                routerLink="/checkout"
+        >
+
+          Proceed to Checkout
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </ng-template>
+
+</div>

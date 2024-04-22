@@ -16,12 +16,12 @@ import {CarouselModule} from "ngx-bootstrap/carousel";
     PaginationModule.forRoot(),
     NgIf,
     FormsModule,
-    CarouselModule.forRoot()
+    CarouselModule.forRoot(),
   ],
   exports: [
     PagingHeaderComponent,
     PagerComponent,
-    CarouselModule
+    CarouselModule,
   ]
 })
 export class SharedModule {

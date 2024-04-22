@@ -4,15 +4,36 @@
 // /* Importing Datepicker SCSS file. */
 // @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
 
-/* Importing Bootstrap SCSS file. */
-//@import "node_modules/bootstrap/scss/bootstrap";
 
-label.xng-breadcrumb-trail {
-  color: deeppink;
+@import "node_modules/bootswatch/dist/journal/variables";
+@import "node_modules/bootstrap/scss/bootstrap";
+@import "node_modules/bootswatch/dist/journal/bootswatch";
+
+
+.vw-5 {
+  width: 5vw;
 }
 
-/* Importing Bootstrap SCSS file. */
-@import "./node_modules/bootstrap/scss/bootstrap";
+.vw-10 {
+  width: 10vw;
+}
 
-/* Importing Datepicker SCSS file. */
-@import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
+.vw-15 {
+  width: 15vw;
+}
+
+.vw-20 {
+  width: 20vw;
+}
+
+label.xng-breadcrumb-trail.ng-star-inserted {
+  color: orange;
+}
+
+a.xng-breadcrumb-link.ng-star-inserted {
+  text-decoration: none;
+}
+
+a {
+  cursor: pointer;
+}

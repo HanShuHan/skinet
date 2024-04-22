@@ -3,6 +3,11 @@ import {Product} from "../../shared/models/product";
 import {ShopService} from "../shop.service";
 import {ActivatedRoute} from "@angular/router";
 import {BreadcrumbService} from "xng-breadcrumb";
+import {BasketService} from "../../basket/basket.service";
+import {environment} from "../../../environments/environment";
+import {BasketItem} from "../../shared/models/basket";
+
+const MAX_QUANTITY: number = environment.maxItemQuantity;
 
 @Component({
   selector: 'app-product-details',
@@ -11,9 +16,10 @@ import {BreadcrumbService} from "xng-breadcrumb";
 })
 export class ProductDetailsComponent implements OnInit {
 
-  product?: Product;
+  product!: Product;
+  quantity: number = 1;
 
-  constructor(private shopService: ShopService, private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService) {
+  constructor(private shopService: ShopService, private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService, protected basketService: BasketService) {
     this.breadcrumbService.set('@productDetails', ' ');
   }
 
@@ -31,4 +37,23 @@ export class ProductDetailsComponent implements OnInit {
     }
   }
 
+  addItemToBasket(): void {
+    this.basketService.addItemToBasket(this.product, this.quantity);
+  }
+
+  plusQuantity(): void {
+    if (this.quantity > 1) {
+      this.quantity -= 1;
+    }
+  }
+
+  minusQuantity(): void {
+    if (this.quantity < MAX_QUANTITY) {
+      this.quantity += 1;
+    }
+  }
+
+  getNumberOfItemsInBasket(id: number, items: BasketItem[]) {
+    return items.find((item) => item.id === id)?.quantity;
+  }
 }

@@ -19,11 +19,11 @@
 
   <div class="d-flex flex-row align-items-center">
 
-    <a href="" class="position-relative">
+    <a class="position-relative" routerLink="/basket" *ngIf="(basketService.basketSource$ | async) as basket">
 
       <i class="fa fa-shopping-cart fa-2x me-5 text-dark"></i>
 
-      <div class="cart-no">3</div>
+      <div class="cart-no">{{ getCount(basket.items) }}</div>
 
     </a>
 

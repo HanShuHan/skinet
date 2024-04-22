@@ -1,35 +1,51 @@
-<div class="container row row-cols-2" *ngIf="product">
+<div class="container">
 
-  <div class="col">
+  <div class="row" *ngIf="product && (basketService.basketSource$ | async) as basket">
 
-    <img ngSrc="{{product.pictureUrl}}" alt="{{product.name}}" priority
-         width="100" height="100"
-         class="w-100 h-100"
-    >
+    <div class="col-3">
 
-  </div>
-
-  <div class="col">
-
-    <h2 class="mb-4">{{ product.name | uppercase }}</h2>
-
-    <p class="mb-4 fs-4">{{product.price | currency: 'USD': 'symbol': '.1-2'}}</p>
-
-    <div class="d-flex align-items-center mb-4">
-
-      <a href=""><i class="fa fa-minus-circle text-warning fa-2x me-4"></i></a>
-
-      <span class="me-4 fs-5"><strong>2</strong></span>
-
-      <a href=""><i class="fa fa-plus-circle text-warning fa-2x me-4"></i></a>
-
-      <a href="" class="btn btn-outline-success ms-2 fs-6">Add to Cart</a>
+      <img ngSrc="{{product.pictureUrl}}" alt="{{product.name}}" priority
+           width="100" height="100"
+           class="w-100 h-100"
+      >
 
     </div>
 
-    <h4>Description</h4>
+    <div class="col-9">
 
-    <p class="fs-6">{{product.description}}</p>
+      <h2 class="mb-4">{{ product.name | uppercase }}</h2>
+
+      <p class="mb-4 fs-4">{{ product.price | currency: 'USD': 'symbol': '.1-2' }}</p>
+
+      <div class="d-flex align-items-center mb-4 justify-content-start text-center">
+
+        <a (click)="plusQuantity()">
+          <i class="fa fa-minus-circle text-warning fa-2x me-4"></i>
+        </a>
+
+        <span class="fs-5 me-4 quantity"><strong>{{ quantity }}</strong></span>
+
+        <a (click)="minusQuantity()">
+          <i class="fa fa-plus-circle text-warning fa-2x me-4"></i>
+        </a>
+
+        <a class="btn btn-outline-success ms-2 fs-6 me-4"
+           (click)="addItemToBasket()"
+        >
+          Add to Cart
+        </a>
+
+        <span *ngIf="getNumberOfItemsInBasket(product.id, basket.items) as numberOfItems" class="text-info">
+          You have <strong>{{ numberOfItems }}</strong> of this item in your basket
+        </span>
+
+      </div>
+
+      <h4>Description</h4>
+
+      <p class="fs-6">{{ product.description }}</p>
+
+    </div>
 
   </div>
 

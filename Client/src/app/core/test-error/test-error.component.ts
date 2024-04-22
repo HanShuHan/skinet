@@ -9,7 +9,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class TestErrorComponent {
 
-  private baseUrl: string = environment.apiUrl + environment.productsUrl;
+  private productsUrl: string = environment.apiUrl + environment.productsPath;
   errMessages?: string[] = [];
 
   constructor(private http: HttpClient) {
@@ -18,7 +18,7 @@ export class TestErrorComponent {
   get400BadRequestError() {
     const id = 'ABC';
 
-    this.http.get(this.baseUrl + id).subscribe({
+    this.http.get(this.productsUrl + id).subscribe({
       error: err => {
         console.log(err);
         if (err.errors) {
@@ -31,7 +31,7 @@ export class TestErrorComponent {
   get404ProductNotFoundError() {
     const id = 999;
 
-    this.http.get(this.baseUrl + id).subscribe({
+    this.http.get(this.productsUrl + id).subscribe({
       error: err => console.log(err)
     });
   }

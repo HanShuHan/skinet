@@ -10,7 +10,9 @@
 
     <div class="position-absolute d-overlay w-100 h-100 d-flex justify-content-around align-items-center px-2">
 
-      <button class="btn btn-warning fa fa-shopping-cart"></button>
+      <button class="btn btn-warning fa fa-shopping-cart"
+              (click)="addItemToBasket()"
+      ></button>
 
       <button class="btn btn-success" routerLink="/shop/{{product.id}}">View</button>
 

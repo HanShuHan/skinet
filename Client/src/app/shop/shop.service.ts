@@ -1,12 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Product} from "../shared/models/product";
+import {Brand, Product, Type} from "../shared/models/product";
 import {Pagination} from "../shared/models/pagination";
 import {Observable} from "rxjs";
-import {Brand} from "../shared/models/brand";
-import {Type} from "../shared/models/type";
 import {ProductParams} from "../shared/models/product-params";
-import {ShopComponent, SORT_OPTIONS} from "./shop.component";
+import {SORT_OPTIONS} from "./shop.component";
 import {environment} from "../../environments/environment";
 
 @Injectable({
@@ -14,27 +12,27 @@ import {environment} from "../../environments/environment";
 })
 export class ShopService {
 
-  private baseUrl: string = environment.apiUrl + environment.productsUrl;
+  private productsUrl: string = environment.apiUrl + environment.productsPath;
 
   constructor(private http: HttpClient) {
   }
 
   public getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(this.baseUrl + id);
+    return this.http.get<Product>(this.productsUrl + id);
   }
 
   public getProducts(productParams: ProductParams): Observable<Pagination<Product[]>> {
     const params = this.genHttpParams(productParams);
 
-    return this.http.get<Pagination<Product[]>>(this.baseUrl, {params: params});
+    return this.http.get<Pagination<Product[]>>(this.productsUrl, {params: params});
   }
 
   public getBrands(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.baseUrl + 'brands');
+    return this.http.get<Brand[]>(this.productsUrl + 'brands');
   }
 
   public getTypes(): Observable<Type[]> {
-    return this.http.get<Type[]>(this.baseUrl + 'types');
+    return this.http.get<Type[]>(this.productsUrl + 'types');
   }
 
   private genHttpParams(productParams: ProductParams): HttpParams {
