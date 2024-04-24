@@ -1,6 +1,11 @@
 using API.Extensions;
 using API.Middleware;
-using Infrastructure.Data;
+using Core.Entities.Identity;
+using Infrastructure.Data.Context;
+using Infrastructure.Data.Seed;
+using Infrastructure.Identity;
+using Infrastructure.Identity.Seed;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -29,39 +35,48 @@ var summaries = new[]
 };
 
 app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    {
+        var forecast = Enumerable.Range(1, 5).Select(index =>
+                new WeatherForecast
+                (
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                    Random.Shared.Next(-20, 55),
+                    summaries[Random.Shared.Next(summaries.Length)]
+                ))
+            .ToArray();
+        return forecast;
+    })
+    .WithName("GetWeatherForecast")
+    .WithOpenApi();
 
 app.UseStaticFiles();
 app.UseCors("CorsPolicy");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 // Create Database
-var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-var context = services.GetRequiredService<StoreContext>();
-var logger = services.GetRequiredService<ILogger<Program>>();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
 
-try
-{
-    await context.Database.MigrateAsync();
-    await StoreContextSeed.SeedAsync(context);
-}
-catch (Exception ex)
-{
-    logger.LogError(ex, "An error happened during the database creation from the migration files");
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    var storeContext = services.GetRequiredService<StoreDbContext>();
+    var identityContext = services.GetRequiredService<AppIdentityDbContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+
+    try
+    {
+        await storeContext.Database.MigrateAsync();
+        await StoreContextSeed.SeedAsync(storeContext);
+
+        await identityContext.Database.MigrateAsync();
+        await AppIdentityDbContextSeed.SeedAsync(userManager);
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error happened during the database creation from the migration files");
+    }
 }
 
 

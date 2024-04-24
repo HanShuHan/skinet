@@ -5,6 +5,7 @@ using API.Errors;
 using API.Helpers;
 using AutoMapper;
 using Core.Entities;
+using Core.Interfaces;
 using Core.Specifications;
 using Infrastructure.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;

@@ -8,7 +8,7 @@ namespace API.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : BaseApiController
     {
-        public ActionResult Error(int code)
+        public ActionResult<ApiResponse> Error(int code)
         {
             var response = new ApiResponse(code);
 

@@ -1,20 +1,22 @@
 using API.Errors;
+using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
-using Infrastructure.Data.Services;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
 namespace API.Extensions
 {
-    public static class ApplicationServicesExtensions
+    public static class ApplicationServicesExtension
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
             services.AddEndpointsApiExplorer(); 
             services.AddSwaggerGen();
-            services.AddDbContext<StoreContext>(option =>
+            services.AddDbContext<StoreDbContext>(option =>
             {
                 option.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
@@ -26,6 +28,7 @@ namespace API.Extensions
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<ApiBehaviorOptions>(options =>
             {

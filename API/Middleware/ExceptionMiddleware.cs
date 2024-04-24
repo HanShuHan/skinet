@@ -16,12 +16,10 @@ namespace API.Middleware
             _next = next;
             _env = env;
             _logger = logger;
-
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
-
             try
             {
                 await _next(context);
@@ -35,7 +33,7 @@ namespace API.Middleware
                 context.Response.StatusCode = (int)statusCode;
 
                 ApiExceptionResponse response = _env.IsDevelopment()
-                    ? new ApiExceptionResponse((int)statusCode, statusCode.ToString(), ex.Message, ex.StackTrace.ToString())
+                    ? new ApiExceptionResponse((int)statusCode, statusCode.ToString(), ex.Message, ex.StackTrace)
                     : new ApiExceptionResponse(statusCode);
 
                 var option = new JsonSerializerOptions(JsonSerializerDefaults.Web);

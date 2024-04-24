@@ -7,7 +7,7 @@ namespace Infrastructure.Data
 {
     public class StoreContext : DbContext
     {
-        public StoreContext(DbContextOptions options, IConfiguration config) : base(options)
+        public StoreContext(DbContextOptions<StoreContext> options, IConfiguration config) : base(options)
         {
         }
         public DbSet<Product> Products { get; set; }

@@ -1,6 +1,7 @@
 using System.Net;
 using API.Errors;
 using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
