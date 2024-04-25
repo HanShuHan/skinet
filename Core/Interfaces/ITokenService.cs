@@ -1,6 +1,8 @@
-namespace Infrastructure.Data.Repositories;
+using Core.Entities.Identity;
 
-public class ITokenService
+namespace Core.Interfaces;
+
+public interface ITokenService
 {
-    
+    string CreateToken(AppUser user);
 }

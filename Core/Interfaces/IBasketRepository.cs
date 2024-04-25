@@ -1,6 +1,6 @@
 using Core.Entities;
 
-namespace Infrastructure.Data.Repositories;
+namespace Core.Interfaces;
 
 public interface IBasketRepository
 {

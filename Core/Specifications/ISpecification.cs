@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using Core.Entities;
 
-namespace Core.Interfaces
+namespace Core.Specifications
 {
     public interface ISpecification<T> where T : BaseEntity
     {

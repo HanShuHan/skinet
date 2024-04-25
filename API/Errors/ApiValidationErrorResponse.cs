@@ -5,14 +5,18 @@ namespace API.Errors
 {
     public class ApiValidationErrorResponse : ApiResponse
     {
-
         public IEnumerable<object> Errors { get; }
 
-        public ApiValidationErrorResponse(IEnumerable<string> errors) : base(HttpStatusCode.BadRequest)
+        public ApiValidationErrorResponse(string errorMessage) : base(HttpStatusCode.BadRequest)
         {
-            Errors = errors;
+            Errors = new List<string>() { errorMessage };
         }
-        
+
+        public ApiValidationErrorResponse(IEnumerable<string> errorMessages) : base(HttpStatusCode.BadRequest)
+        {
+            Errors = errorMessages;
+        }
+
         public ApiValidationErrorResponse(IEnumerable<IdentityError> errors) : base(HttpStatusCode.BadRequest)
         {
             Errors = errors;

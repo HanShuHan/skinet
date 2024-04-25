@@ -1,55 +1,56 @@
 using System.Text.Json;
 using Core.Entities;
+using Infrastructure.Data.Context;
 using SQLitePCL;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data.Seed
 {
     public class StoreContextSeed
     {
 
-        private static StoreContext _context;
+        private static StoreDbContext _dbContext;
 
-        public static async Task SeedAsync(StoreContext context)
+        public static async Task SeedAsync(StoreDbContext dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
 
             SeedProductBrands();
             SeedProductTypes();
             SeedProducts();
 
-            if (_context.ChangeTracker.HasChanges())
+            if (_dbContext.ChangeTracker.HasChanges())
             {
-                await _context.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
             }
         }
 
         private static void SeedProductBrands()
         {
-            if (!_context.ProductBrands.Any())
+            if (!_dbContext.ProductBrands.Any())
             {
-                var brandsInText = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
+                var brandsInText = File.ReadAllText("../Infrastructure/Data/Seed/Data/brands.json");
                 var brands = JsonSerializer.Deserialize<IReadOnlyList<ProductBrand>>(brandsInText);
-                _context.ProductBrands.AddRange(brands);
+                _dbContext.ProductBrands.AddRange(brands);
             }
         }
 
         private static void SeedProductTypes()
         {
-            if (!_context.ProductTypes.Any())
+            if (!_dbContext.ProductTypes.Any())
             {
-                var typesInText = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
+                var typesInText = File.ReadAllText("../Infrastructure/Data/Seed/Data/types.json");
                 var types = JsonSerializer.Deserialize<IReadOnlyList<ProductType>>(typesInText);
-                _context.ProductTypes.AddRange(types);
+                _dbContext.ProductTypes.AddRange(types);
             }
         }
 
         private static void SeedProducts()
         {
-            if (!_context.Products.Any())
+            if (!_dbContext.Products.Any())
             {
-                var productsInText = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
+                var productsInText = File.ReadAllText("../Infrastructure/Data/Seed/Data/products.json");
                 var products = JsonSerializer.Deserialize<IReadOnlyList<Product>>(productsInText);
-                _context.Products.AddRange(products);
+                _dbContext.Products.AddRange(products);
             }
         }
     }

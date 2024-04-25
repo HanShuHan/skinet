@@ -1,17 +1,18 @@
 using Core.Entities;
 using Core.Interfaces;
-using Infrastructure.Data.Repositories;
+using Core.Specifications;
+using Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data
+namespace Infrastructure.Data.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
-        private readonly StoreContext _context;
+        private readonly StoreDbContext _dbContext;
 
-        public GenericRepository(StoreContext context)
+        public GenericRepository(StoreDbContext dbContext)
         {
-            _context = context;
+            _dbContext = dbContext;
         }
 
         public async Task<int> CountAsync(ISpecification<T> specification)
@@ -21,7 +22,7 @@ namespace Infrastructure.Data
 
         public async Task<IReadOnlyList<T>> ListAllAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _dbContext.Set<T>().ToListAsync();
         }
 
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification)
@@ -31,7 +32,7 @@ namespace Infrastructure.Data
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await _context.Set<T>().FindAsync(id);
+            return await _dbContext.Set<T>().FindAsync(id);
         }
 
         public async Task<T> GetEntityAsync(ISpecification<T> specification)
@@ -41,7 +42,7 @@ namespace Infrastructure.Data
 
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)
         {
-            return SpecificationEvaluator<T>.GetQuery(_context.Set<T>().AsQueryable(), specification);
+            return SpecificationEvaluator<T>.GetQuery(_dbContext.Set<T>().AsQueryable(), specification);
         }
     }
 }

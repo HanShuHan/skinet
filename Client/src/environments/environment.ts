@@ -10,7 +10,8 @@ export const environment = {
     resetTimeoutOnDuplicate: true,
     includeTitleDuplicates: true,
     newestOnTop: true,
-    disableTimeOut: true,
+    timeout: 5000,
+    extendedTimeOut: 3000,
     easeTime: 500,
     positionClass: 'toast-bottom-right'
   },

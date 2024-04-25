@@ -1,8 +1,7 @@
 using Core.Entities;
-using Core.Interfaces;
 using Core.Specifications;
 
-namespace Infrastructure.Data.Repositories
+namespace Core.Interfaces
 {
     public interface IProductService
     {

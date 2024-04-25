@@ -1,9 +1,10 @@
 using System.Text.Json;
 using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Data.Repositories;
 using StackExchange.Redis;
 
-namespace Infrastructure.Data;
+namespace Infrastructure.Data.Repositories;
 
 public class BasketRepository : IBasketRepository
 {
