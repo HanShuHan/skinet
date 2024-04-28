@@ -1,4 +1,6 @@
-using API.Dtos;
+using API.Dtos.Identity;
+using API.Dtos.Store.Basket;
+using API.Dtos.Store.Basket.Product;
 using AutoMapper;
 using Core.Entities;
 using Core.Entities.Identity;

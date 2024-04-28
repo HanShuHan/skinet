@@ -1,7 +1,6 @@
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Data.Repositories;
 
 namespace Infrastructure.Services
 {

@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Core.Entities;
 using Infrastructure.Data.Context;
-using SQLitePCL;
 
 namespace Infrastructure.Data.Seed
 {

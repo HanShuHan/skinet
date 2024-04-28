@@ -1,13 +1,12 @@
 using System.Net;
 using System.Net.Mime;
-using API.Dtos;
+using API.Dtos.Store.Basket.Product;
 using API.Errors;
 using API.Helpers;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Data.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers

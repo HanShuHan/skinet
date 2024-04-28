@@ -1,8 +1,12 @@
 export const environment = {
   production: false,
   apiUrl: 'api/',
+  paths: {
+    emailNotUsed: 'emailNotUsed'
+  },
   productsPath: 'products/',
   basketPath: 'basket/',
+  accountPath: 'account/',
   toastrConfig: {
     closeButton: true,
     preventDuplicates: true,
@@ -17,5 +21,9 @@ export const environment = {
   home: 'Home',
   basketId: 'basket_id',
   maxItemQuantity: 999,
-  taxRate: 0.05
+  taxRate: 0.05,
+  token: "token",
+  bearer: 'Bearer',
+  passwordPattern: '(?=^.{6,10}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;\'?/&gt;.&lt;,])(?!.*\\s).*$',
+  phoneNumberPattern: '^\\D?(\\d{3})\\D?\\D?(\\d{3})\\D?(\\d{4})$'
 };

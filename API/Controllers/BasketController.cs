@@ -1,4 +1,4 @@
-using API.Dtos;
+using API.Dtos.Store.Basket;
 using AutoMapper;
 using Core.Entities;
 using Core.Interfaces;

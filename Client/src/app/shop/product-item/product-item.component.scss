@@ -36,3 +36,18 @@
   }
 }
 
+.add-item {
+  font-size: 175%;
+
+  &:hover {
+    font-size: 280%;
+  }
+}
+
+.view-basket {
+  font-size: 115%;
+
+  &:hover {
+    font-size: 180%;
+  }
+}

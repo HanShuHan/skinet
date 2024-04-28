@@ -10,7 +10,7 @@ import {ErrorResponse} from "../../shared/models/ErrorResponse";
 })
 export class ErrorComponent {
 
-  error!: ErrorResponse;
+  error?: ErrorResponse;
 
   constructor(private router: Router) {
     const error = this.router.getCurrentNavigation()?.extras?.state?.['error'];

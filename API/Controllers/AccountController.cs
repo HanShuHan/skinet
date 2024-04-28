@@ -1,7 +1,5 @@
-using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Security.Claims;
-using API.Dtos;
+using API.Dtos.Identity;
 using API.Errors;
 using API.Extensions;
 using AutoMapper;
@@ -42,15 +40,15 @@ public class AccountController : BaseApiController
         if (user == null) return NotFound(new ApiResponse(HttpStatusCode.NotFound));
 
         return Ok(new UserDto(user.UserName, user.Email, user.DisplayName, user.PhoneNumber,
-            _mapper.Map<Address, AddressDto>(user.Address)));
+            _mapper.Map<Address, AddressDto>(user.Address), _tokenService.CreateToken(user)));
     }
 
-    [HttpGet("emailExists")]
+    [HttpGet("emailNotInUse")]
     public async Task<ActionResult<bool>> CheckEmailExists([FromQuery] string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
 
-        return Ok(user != null);
+        return Ok(user == null);
     }
 
     [Authorize]
@@ -84,7 +82,7 @@ public class AccountController : BaseApiController
 
 
     [HttpPost("register")]
-    public async Task<ActionResult<UserToken>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         // Validate
         var validationResult = await Validate(registerDto);
@@ -107,14 +105,16 @@ public class AccountController : BaseApiController
             return BadRequest(new ApiValidationErrorResponse(result.Errors));
         }
 
-        var token = new UserToken(user.Email, _tokenService.CreateToken(user));
+        var token = new UserDto(user.UserName, user.Email, user.DisplayName, user.PhoneNumber,
+            _mapper.Map<Address, AddressDto>(user.Address), _tokenService.CreateToken(user));
         return Ok(token);
     }
-    
+
     [HttpPost("login")]
-    public async Task<ActionResult<UserToken>> Login(LoginDto loginDto)
+    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
-        var user = await _userManager.FindByNameAsync(loginDto.UserName);
+        var user = await _userManager.Users.Include(u => u.Address)
+            .SingleOrDefaultAsync(u => u.UserName == loginDto.UserName);
 
         if (user == null)
         {
@@ -130,23 +130,23 @@ public class AccountController : BaseApiController
             }
             else
             {
-                var token = new UserToken(user.Email, _tokenService.CreateToken(user));
-
+                var token = new UserDto(user.UserName, user.Email, user.DisplayName, user.PhoneNumber,
+                    _mapper.Map<Address, AddressDto>(user.Address), _tokenService.CreateToken(user));
                 return Ok(token);
             }
         }
     }
-    
+
     private async Task<ValidationResult> Validate(RegisterDto registerDto)
     {
         var errorMessages = new List<string>();
-        
+
         var existingUser = await _userManager.FindByNameAsync(registerDto.UserName);
         if (existingUser != null)
         {
             errorMessages.Add(_config["Messages:ErrorMessage:DuplicateUserName"]);
         }
-        
+
         existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
         if (existingUser != null)
         {
@@ -155,5 +155,4 @@ public class AccountController : BaseApiController
 
         return errorMessages.Count == 0 ? new ValidationResult(true) : new ValidationResult(false, errorMessages);
     }
-
 }

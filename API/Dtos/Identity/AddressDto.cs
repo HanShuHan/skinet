@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace API.Dtos;
+namespace API.Dtos.Identity;
 
 public class AddressDto
 {
@@ -23,4 +23,9 @@ public class AddressDto
     [Required]
     [MaxLength(50)]
     public string Country { get; set; }
+
+    public AddressDto(string street)
+    {
+        Street = street;
+    }
 }

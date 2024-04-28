@@ -16,10 +16,10 @@ export class ErrorInterceptor implements HttpInterceptor {
         if (err) {
           const error = err.error;
 
-          if (err.status === 400 && err.error.errors) {
+          if (err.status === 400 && error.errors) {
             throw err.error;
           } else {
-            const extras: NavigationExtras = {state: {error: err.error}};
+            const extras: NavigationExtras = {state: {error: error}};
 
             this.router.navigateByUrl(`/error/${err.status}`, extras)
               .then(() => this.toastr.error(error.message, error.statusCode));

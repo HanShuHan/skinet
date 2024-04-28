@@ -8,6 +8,6 @@ import {BreadcrumbService} from "xng-breadcrumb";
 })
 export class SectionHeaderComponent {
 
-  constructor(public breadcrumbService: BreadcrumbService) {
+  constructor(protected breadcrumbService: BreadcrumbService) {
   }
 }

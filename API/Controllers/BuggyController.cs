@@ -1,6 +1,5 @@
 using System.Net;
 using API.Errors;
-using Infrastructure.Data;
 using Infrastructure.Data.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

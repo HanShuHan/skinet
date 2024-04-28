@@ -1,6 +1,5 @@
 using API.Errors;
 using Core.Interfaces;
-using Infrastructure.Data;
 using Infrastructure.Data.Context;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Services;

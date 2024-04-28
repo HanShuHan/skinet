@@ -5,10 +5,12 @@
 // @import "node_modules/ngx-bootstrap/datepicker/bs-datepicker";
 
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 @import "node_modules/bootswatch/dist/journal/variables";
 @import "node_modules/bootstrap/scss/bootstrap";
 @import "node_modules/bootswatch/dist/journal/bootswatch";
-
 
 .vw-5 {
   width: 5vw;
@@ -36,4 +38,8 @@ a.xng-breadcrumb-link.ng-star-inserted {
 
 a {
   cursor: pointer;
+}
+
+.invalid-feedback {
+  font-size: 110%;
 }

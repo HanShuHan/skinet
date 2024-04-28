@@ -1,0 +1,28 @@
+<section class="d-flex justify-content-center">
+
+  <form class="col-6 text-center mt-4 border rounded-4 p-4"
+        [formGroup]="loginForm"
+  >
+    <h2 class="mb-4">Login</h2>
+
+    <app-input-text [type]="'text'"
+                    [abstractControl]="loginForm.get('userName')"
+                    [label]="'Username'"
+                    disabled
+    />
+
+    <app-input-text [type]="'password'"
+                    [abstractControl]="loginForm.get('password')"
+                    [label]="'Password'"
+    />
+
+    <input type="submit"
+           class="btn btn-lg btn-success w-100"
+           value="Login"
+           (click)="login()"
+           [disabled]="loginForm.invalid"
+    >
+
+  </form>
+
+</section>

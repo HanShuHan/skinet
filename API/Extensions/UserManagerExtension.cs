@@ -11,6 +11,6 @@ public static class UserManagerExtension
         ClaimsPrincipal user)
     {
         return await userManager.Users.Include(u => u.Address)
-            .SingleAsync(u => u.Email == user.FindFirstValue(ClaimTypes.Email));
+            .SingleOrDefaultAsync(u => u.Email == user.FindFirstValue(ClaimTypes.Email));
     }
 }

@@ -1,6 +1,4 @@
-using Core.Entities;
-
-namespace API.Dtos
+namespace API.Dtos.Store.Basket.Product
 {
     public class ProductToReturnDto
     {
@@ -16,7 +14,7 @@ namespace API.Dtos
         {
         }
 
-        public ProductToReturnDto(Product product)
+        public ProductToReturnDto(Core.Entities.Product product)
         {
             Id = product.Id;
             Name = product.Name;

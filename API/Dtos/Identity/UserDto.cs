@@ -1,6 +1,4 @@
-using Core.Entities.Identity;
-
-namespace API.Dtos;
+namespace API.Dtos.Identity;
 
 public class UserDto
 {
@@ -9,13 +7,15 @@ public class UserDto
     public string DisplayName { get; set; }
     public string PhoneNumber { get; set; }
     public AddressDto Address { get; set; }
+    public string Token { get; set; }
 
-    public UserDto(string userName, string email, string displayName, string phoneNumber, AddressDto address)
+    public UserDto(string userName, string email, string displayName, string phoneNumber, AddressDto address, string token)
     {
         UserName = userName;
         Email = email;
         DisplayName = displayName;
         PhoneNumber = phoneNumber;
         Address = address;
+        Token = token;
     }
 }

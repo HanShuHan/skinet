@@ -1,0 +1,58 @@
+<section class="d-flex justify-content-center">
+
+  <form class="col-6 text-center mt-4 border rounded-4 p-4"
+        [formGroup]="registerForm"
+  >
+    <h2 class="mb-4">Register</h2>
+
+    <app-input-text [type]="'text'"
+                    [abstractControl]="registerForm.get('userName')"
+                    [label]="'Username'"
+    />
+
+    <app-input-text [type]="'password'"
+                    [abstractControl]="registerForm.get('password')"
+                    [label]="'Password'"
+                    [passwordErrorMessage]="passwordErrorMessage"
+    />
+
+    <app-input-text [type]="'email'"
+                    [abstractControl]="registerForm.get('email')"
+                    [label]="'Email'"
+    />
+
+    <app-input-text [type]="'tel'"
+                    [abstractControl]="registerForm.get('phoneNumber')"
+                    [label]="'Phone Number'"
+                    [phoneNumberErrorMessage]="phoneNumberErrorMessage"
+    />
+
+    <app-input-text [type]="'text'"
+                    [abstractControl]="registerForm.get('displayName')"
+                    [label]="'Display Name'"
+    />
+
+    <ng-container *ngIf="errors">
+
+      <ul class="list-unstyled" *ngFor="let error of errors">
+
+        <li class="text-danger">
+
+          {{ error }}
+
+        </li>
+
+      </ul>
+
+    </ng-container>
+
+    <input type="submit"
+           class="btn btn-lg btn-success w-100"
+           value="Register"
+           (click)="register()"
+           [disabled]="registerForm.invalid"
+    >
+
+  </form>
+
+</section>

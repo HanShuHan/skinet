@@ -1,0 +1,49 @@
+<ng-container *ngIf="abstractControl">
+
+  <div class="form-floating mb-4">
+
+    <input [type]="type"
+           class="form-control"
+           [placeholder]="label"
+           [formControl]="formControl"
+           [ngClass]="getValidationResultClass()"
+           (keyup)="markAsTouched()"
+    >
+
+    <label>{{ label }}</label>
+
+    <ng-container *ngIf="abstractControl.errors as errors">
+
+      <span *ngIf="errors['required']" class="invalid-feedback block">{{ label | titlecase }} cannot be empty</span>
+
+      <span *ngIf="errors['minlength']" class="invalid-feedback block">{{ label | titlecase }}'s length should be greater than {{ errors['minlength']['requiredLength'] }}</span>
+
+      <span *ngIf="errors['maxlength']" class="invalid-feedback block">{{ label | titlecase }}'s length should be less than {{ errors['maxlength']['requiredLength'] }}</span>
+
+      <ng-container *ngIf="type == 'email'">
+
+        <span *ngIf="errors['email']" class="invalid-feedback block">{{ label | titlecase }} should have a valid email pattern</span>
+
+        <span *ngIf="errors['emailInUse']" class="invalid-feedback block">{{ label | titlecase }} is in use</span>
+
+      </ng-container>
+
+      <ng-container *ngIf="errors['pattern']">
+
+        <span *ngIf="type == 'password'; else phoneNumberError"
+              class="invalid-feedback block"
+        >
+          {{ passwordErrorMessage }}
+        </span>
+
+        <ng-template #phoneNumberError class="invalid-feedback block">
+          <span class="invalid-feedback block">{{ phoneNumberErrorMessage }}</span>
+        </ng-template>
+
+      </ng-container>
+
+    </ng-container>
+
+  </div>
+
+</ng-container>
