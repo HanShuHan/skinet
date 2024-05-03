@@ -25,7 +25,7 @@
 
         <h5 class="text-warning">Brands</h5>
 
-        <ul class="list-group">
+        <ul class="list-group" *ngIf="(shopService.productBrandsSource$ | async) as brands">
 
           <li class="list-group-item btn text-start"
               *ngFor="let brand of brands"
@@ -43,14 +43,14 @@
 
         <h5 class="text-warning">Types</h5>
 
-        <ul class="list-group">
+        <ul class="list-group" *ngIf="(shopService.productTypesSource$ | async) as productTypes">
 
           <li class="list-group-item btn text-start"
-              *ngFor="let type of types"
-              [class.active]="type.id === productParams.typeId"
-              (click)="onTypeSelected(type.id)"
+              *ngFor="let productType of productTypes"
+              [class.active]="productType.id === productParams.typeId"
+              (click)="onTypeSelected(productType.id)"
           >
-            {{ type.name }}
+            {{ productType.name }}
           </li>
 
         </ul>

@@ -1,7 +1,7 @@
 using Core.Entities;
 using Core.Interfaces;
 using Core.Specifications;
-using Infrastructure.Data.Context;
+using Infrastructure.Data.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data.Repositories
@@ -25,7 +25,7 @@ namespace Infrastructure.Data.Repositories
             return await _dbContext.Set<T>().ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> specification)
+        public async Task<IReadOnlyList<T>> ListWithSpecsAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).ToListAsync();
         }
@@ -35,9 +35,31 @@ namespace Infrastructure.Data.Repositories
             return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> GetEntityAsync(ISpecification<T> specification)
+        public async Task<IReadOnlyList<T>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _dbContext.Set<T>()
+                .Where(T => ids.Contains(T.Id))
+                .ToListAsync();
+        }
+
+        public async Task<T> GetWithSpecsAsync(ISpecification<T> specification)
         {
             return await ApplySpecification(specification).FirstOrDefaultAsync();
+        }
+
+        public void Add(T entity)
+        {
+            _dbContext.Set<T>().Add(entity);
+        }
+
+        public void Update(T entity)
+        {
+            _dbContext.Set<T>().Update(entity);
+        }
+
+        public void Delete(T entity)
+        {
+            _dbContext.Set<T>().Remove(entity);
         }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> specification)

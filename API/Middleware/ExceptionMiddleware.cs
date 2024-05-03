@@ -29,11 +29,11 @@ namespace API.Middleware
                 _logger.LogError(ex, ex.Message);
 
                 const HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
-                context.Response.ContentType = MediaTypeNames.Application.Json;
                 context.Response.StatusCode = (int)statusCode;
+                context.Response.ContentType = MediaTypeNames.Application.Json;
 
                 ApiExceptionResponse response = _env.IsDevelopment()
-                    ? new ApiExceptionResponse((int)statusCode, statusCode.ToString(), ex.Message, ex.StackTrace)
+                    ? new ApiExceptionResponse(statusCode, null, ex.Message, ex.StackTrace)
                     : new ApiExceptionResponse(statusCode);
 
                 var option = new JsonSerializerOptions(JsonSerializerDefaults.Web);

@@ -1,15 +1,19 @@
+using System.Linq.Expressions;
 using Core.Entities;
+using Core.Entities.ProductAggregate;
 
 namespace Core.Specifications
 {
     public class ProductsCountSpecification : BaseSpecification<Product>
     {
-        public ProductsCountSpecification(ProductSpecParams specParams)
+        public ProductsCountSpecification(ProductsSpecificationParams specificationParams)
             : base(p =>
-                ((!specParams.BrandId.HasValue || specParams.BrandId < 1) || p.ProductBrandId == specParams.BrandId)
-                && ((!specParams.TypeId.HasValue || specParams.TypeId < 1) || p.ProductTypeId == specParams.TypeId)
-                && (string.IsNullOrEmpty(specParams.Search) || p.Name.ToLower().Contains(specParams.Search.ToLower()))
+                (specificationParams.BrandId < 1 || p.ProductBrandId == specificationParams.BrandId)
+                && (specificationParams.TypeId < 1 || p.ProductTypeId == specificationParams.TypeId)
+                && (string.IsNullOrEmpty(specificationParams.Search) ||
+                    p.Name.ToLower().Contains(specificationParams.Search.ToLower()))
             )
-        { }
+        {
+        }
     }
 }

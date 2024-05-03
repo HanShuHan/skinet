@@ -11,6 +11,11 @@ namespace API.Errors
         {
             Errors = new List<string>() { errorMessage };
         }
+        
+        public ApiValidationErrorResponse(string errorMessage, string detailMessage) : base(HttpStatusCode.BadRequest, null, detailMessage)
+        {
+            Errors = new List<string>() { errorMessage };
+        }
 
         public ApiValidationErrorResponse(IEnumerable<string> errorMessages) : base(HttpStatusCode.BadRequest)
         {

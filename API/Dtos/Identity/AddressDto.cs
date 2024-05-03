@@ -24,8 +24,5 @@ public class AddressDto
     [MaxLength(50)]
     public string Country { get; set; }
 
-    public AddressDto(string street)
-    {
-        Street = street;
-    }
+    
 }

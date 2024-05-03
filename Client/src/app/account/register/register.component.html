@@ -5,20 +5,15 @@
   >
     <h2 class="mb-4">Register</h2>
 
-    <app-input-text [type]="'text'"
-                    [abstractControl]="registerForm.get('userName')"
-                    [label]="'Username'"
+    <app-input-text [type]="'email'"
+                    [abstractControl]="registerForm.get('email')"
+                    [label]="'Email'"
     />
 
     <app-input-text [type]="'password'"
                     [abstractControl]="registerForm.get('password')"
                     [label]="'Password'"
                     [passwordErrorMessage]="passwordErrorMessage"
-    />
-
-    <app-input-text [type]="'email'"
-                    [abstractControl]="registerForm.get('email')"
-                    [label]="'Email'"
     />
 
     <app-input-text [type]="'tel'"
@@ -38,7 +33,7 @@
 
         <li class="text-danger">
 
-          {{ error }}
+          {{ error | json }}
 
         </li>
 

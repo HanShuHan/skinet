@@ -1,7 +1,6 @@
 using System.Text.Json;
-using Core.Entities;
+using Core.Entities.BasketAggregate;
 using Core.Interfaces;
-using Infrastructure.Data.Repositories;
 using StackExchange.Redis;
 
 namespace Infrastructure.Data.Repositories;
@@ -15,14 +14,14 @@ public class BasketRepository : IBasketRepository
         _database = multiplexer.GetDatabase();
     }
 
-    public async Task<CustomerBasket> GetByIdAsync(string id)
+    public async Task<SimpleBasket> GetByIdAsync(string id)
     {
         var basketStr = await _database.StringGetAsync(id);
         
-        return basketStr.IsNullOrEmpty ? null : JsonSerializer.Deserialize<CustomerBasket>(basketStr);
+        return basketStr.IsNullOrEmpty ? null : JsonSerializer.Deserialize<SimpleBasket>(basketStr);
     }
 
-    public async Task<CustomerBasket> UpdateAsync(CustomerBasket basket)
+    public async Task<SimpleBasket> UpdateAsync(SimpleBasket basket)
     {
         var success =
             await _database.StringSetAsync(basket.Id, JsonSerializer.Serialize(basket), TimeSpan.FromDays(30));

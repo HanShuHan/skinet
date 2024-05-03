@@ -12,7 +12,6 @@ export interface LoginForm {
 }
 
 export interface User {
-  userName: string
   email: string
   displayName: string
   phoneNumber: string

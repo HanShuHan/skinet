@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {PaginationModule} from "ngx-bootstrap/pagination";
 import {PagingHeaderComponent} from './paging-header/paging-header.component';
-import {JsonPipe, LowerCasePipe, NgClass, NgIf, TitleCasePipe} from "@angular/common";
+import {JsonPipe, LowerCasePipe, NgClass, NgForOf, NgIf, TitleCasePipe} from "@angular/common";
 import {PagerComponent} from './pager/pager.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CarouselModule} from "ngx-bootstrap/carousel";
@@ -12,7 +12,7 @@ import {InputTextComponent} from './input-text/input-text.component';
   declarations: [
     PagingHeaderComponent,
     PagerComponent,
-    InputTextComponent
+    InputTextComponent,
   ],
   imports: [
     PaginationModule.forRoot(),
@@ -24,6 +24,7 @@ import {InputTextComponent} from './input-text/input-text.component';
     LowerCasePipe,
     JsonPipe,
     TitleCasePipe,
+    NgForOf,
   ],
   exports: [
     PagingHeaderComponent,

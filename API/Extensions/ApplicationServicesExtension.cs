@@ -1,6 +1,6 @@
 using API.Errors;
 using Core.Interfaces;
-using Infrastructure.Data.Context;
+using Infrastructure.Data;
 using Infrastructure.Data.Repositories;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -17,16 +17,22 @@ namespace API.Extensions
             {
                 option.UseSqlite(config.GetConnectionString("DefaultConnection"));
             });
+            
             services.AddSingleton<IConnectionMultiplexer>(provider =>
             { 
                 var option = ConfigurationOptions.Parse(config.GetConnectionString("Redis"));
                 return ConnectionMultiplexer.Connect(option);
             });
+            
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBasketRepository, BasketRepository>();
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = actionContext =>
@@ -35,9 +41,9 @@ namespace API.Extensions
                         .Where(e => e.Value.Errors.Count > 0)
                         .SelectMany(x => x.Value.Errors)
                         .Select(x => x.ErrorMessage);
-                    var reponse = new ApiValidationErrorResponse(errors);
+                    var response = new ApiValidationErrorResponse(errors);
 
-                    return new BadRequestObjectResult(reponse);
+                    return new BadRequestObjectResult(response);
                 };
             });
 

@@ -7,11 +7,14 @@ namespace Core.Specifications
     {
         public Expression<Func<T, bool>> Criteria { get; set; }
         public string Search { get; set; }
+
+        public List<Expression<Func<T, object>>> Includes { get; } = [];
+
         public Expression<Func<T, object>> OrderBy { get; set; }
-        public List<Expression<Func<T, object>>> ThenBys { get; } = new List<Expression<Func<T, object>>>();
+        public List<Expression<Func<T, object>>> ThenBys { get; } = [];
         public Expression<Func<T, object>> OrderByDescending { get; set; }
-        public List<Expression<Func<T, object>>> ThenByDescendings { get; } = new List<Expression<Func<T, object>>>();
-        public List<Expression<Func<T, object>>> Includes { get; } = new List<Expression<Func<T, object>>>();
+        public List<Expression<Func<T, object>>> ThenByDescendings { get; } = [];
+
         public bool IsPagingEnabled { get; set; }
         public int Skip { get; set; }
         public int Take { get; set; }
@@ -25,48 +28,38 @@ namespace Core.Specifications
             Criteria = criteria;
         }
 
-        protected void AddInclude(Expression<Func<T, object>> includeExpression)
+        public void AddInclude(Expression<Func<T, object>> includeExpression)
         {
             Includes.Add(includeExpression);
         }
 
-        protected void AddIncludes(IReadOnlyCollection<Expression<Func<T, object>>> includeExpressions)
+        public void AddIncludes(IReadOnlyCollection<Expression<Func<T, object>>> includeExpressions)
         {
             Includes.AddRange(includeExpressions);
         }
 
-        protected void AddThenBy(Expression<Func<T, object>> thenByExpression)
+        public void AddThenBy(Expression<Func<T, object>> thenByExpression)
         {
             ThenBys.Add(thenByExpression);
         }
 
-        protected void AddThenBys(IReadOnlyCollection<Expression<Func<T, object>>> thenByExpressions)
+        public void AddThenBys(IReadOnlyCollection<Expression<Func<T, object>>> thenByExpressions)
         {
             ThenBys.AddRange(thenByExpressions);
         }
 
-        protected void AddThenByDescsending(Expression<Func<T, object>> thenByDescendingExpression)
+        public void AddThenByDescending(Expression<Func<T, object>> thenByDescendingExpression)
         {
             ThenByDescendings.Add(thenByDescendingExpression);
         }
 
-        protected void AddThenByDescsendings(IReadOnlyCollection<Expression<Func<T, object>>> thenByDescendingExpressions)
+        public void AddThenByDescendings(IReadOnlyCollection<Expression<Func<T, object>>> thenByDescendingExpressions)
         {
             ThenByDescendings.AddRange(thenByDescendingExpressions);
         }
 
-        protected void ApplyPaging(int pageIndex, int pageSize)
+        public void ApplyPaging(int pageIndex, int pageSize)
         {
-            if (pageIndex < 1)
-            {
-                pageIndex = 1;
-            }
-
-            if (pageSize > ProductSpecParams.MaxPageSize || pageSize < 1)
-            {
-                pageSize = ProductSpecParams.MaxPageSize;
-            }
-
             IsPagingEnabled = true;
             Skip = pageSize * (pageIndex - 1);
             Take = pageSize;

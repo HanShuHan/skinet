@@ -1,6 +1,6 @@
-using API.Dtos.Store.Basket.Product;
+using API.Dtos.Store.Product;
 using AutoMapper;
-using Core.Entities;
+using Core.Entities.ProductAggregate;
 
 namespace API.Helpers
 {

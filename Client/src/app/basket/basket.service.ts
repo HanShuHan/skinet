@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 import {BehaviorSubject} from "rxjs";
-import {Basket, BasketItem, BasketSubtotals} from "../shared/models/basket";
+import {BasketSubtotals, SimpleBasket, SimpleBasketItem} from "../shared/models/simpleBasket";
 import {environment} from "../../environments/environment";
-import {Product} from "../shared/models/product";
 import {ToastrService} from "ngx-toastr";
+import {Product} from "../shared/models/product";
+import {ShopService} from "../shop/shop.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,42 +13,48 @@ import {ToastrService} from "ngx-toastr";
 export class BasketService {
 
   private basketUrl: string = environment.apiUrl + environment.basketPath;
-  private basketSource = new BehaviorSubject<Basket | null>(null);
-  basketSource$ = this.basketSource.asObservable();
-  private recordedBasket: Basket | null = null;
+  // Simple basket for Redis
+  private simpleBasketSource = new BehaviorSubject<SimpleBasket | null>(null);
+  simpleBasketSource$ = this.simpleBasketSource.asObservable();
+  private simpleBasketBackup: SimpleBasket | null = null;
+  // Basket Items
+  private basketItemsSource = new BehaviorSubject<Product[] | null>(null);
+  basketItemsSource$ = this.basketItemsSource.asObservable();
+  // The basket's subtotals
   private subtotalsSource = new BehaviorSubject<BasketSubtotals | null>(null);
   subtotalsSource$ = this.subtotalsSource.asObservable();
 
-  constructor(private http: HttpClient, private toastr: ToastrService) {
+  constructor(private http: HttpClient, private toastr: ToastrService, private shopService: ShopService) {
     const basketId = localStorage.getItem(environment.basketId);
 
     if (basketId != null) {
-      this.getBasket(basketId);
+      this.getSimpleBasket(basketId);
     }
   }
 
   addItemToBasket(product: Product, quantity: number = 1): void {
-    let basket = this.getBasketSource();
+    let basket = this.simpleBasketSource.getValue();
 
     if (basket == null) {
       basket = this.createBasket();
     }
-    this.recordedBasket = basket;
+    this.simpleBasketBackup = basket;
 
-    const existingItem = basket.items.find(item => item.id === product.id);
+    const existingItem = basket.items.find(item => item.productId === product.id);
 
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
-      const item = new BasketItem(product, quantity);
-      basket.items.push(item);
+      const item = new SimpleBasketItem(product.id, quantity);
+      basket.items.unshift(item);
+      this.basketItemsSource.getValue()?.unshift(product);
     }
 
     this.updateBasket();
   }
 
   public updateBasket(): void {
-    this.http.post<Basket>(this.basketUrl, this.getBasketSource())
+    this.http.post<SimpleBasket>(this.basketUrl, this.simpleBasketSource.getValue())
       .subscribe({
         next: updatedBasket => {
           if (updatedBasket == null) {
@@ -60,58 +67,76 @@ export class BasketService {
       });
   }
 
-  public removeItem(item: BasketItem): void {
-    const basket = this.getBasketSource();
+  public removeItemByIndex(index: number): void {
+    const simpleBasket = this.simpleBasketSource.getValue();
+    const basketItems = this.basketItemsSource.getValue();
 
-    if (basket) {
-      basket.items = basket.items.filter(i => i.id !== item.id);
+    if (simpleBasket && basketItems) {
+      simpleBasket.items.splice(index, 1);
+      basketItems.splice(index, 1);
       this.updateBasket();
     }
   }
 
-  private getBasket(id: string): void {
-    this.http.get<Basket>(this.basketUrl + id)
+  private getSimpleBasket(id: string): void {
+    this.http.get<SimpleBasket>(this.basketUrl + id)
       .subscribe({
-        next: basket => {
-          this.setBasketSource(basket);
-          this.calculateSubTotal();
+        next: simpleBasket => {
+          this.setSimpleBasketSource(simpleBasket);
         },
         error: err => console.log(err)
       });
   }
 
-  private getBasketSource() {
-    return this.basketSource.getValue();
-  }
-
-  private calculateSubTotal(): void {
-    const basket = this.getBasketSource();
-
-    if (basket) {
-      const subTotal = basket.items.reduce((subtotal, item) => subtotal + (item.price * item.quantity), 0);
-      this.setSubTotalsSource(new BasketSubtotals(subTotal));
+  public getBasketProducts() {
+    const productIds = this.simpleBasketSource.getValue()!.items
+      .map(item => item.productId);
+    if (productIds.length > 0) {
+      this.shopService.getProductsByIds(productIds)
+        .subscribe({
+          next: products => {
+            this.basketItemsSource.next(products.data);
+            this.calculateSubTotal();
+          },
+          error: err => console.log(err)
+        });
+    } else {
+      this.basketItemsSource.next([]);
     }
   }
 
-  private setBasketSource(basket: Basket | null) {
-    this.basketSource.next(basket);
+  private calculateSubTotal(): void {
+    const simpleBasket = this.simpleBasketSource.getValue();
+    const basketItems = this.basketItemsSource.getValue();
+
+    if (simpleBasket && basketItems) {
+      let subtotal = 0;
+      for (let i = 0; i < basketItems.length; i++) {
+        subtotal += simpleBasket.items[i].quantity * basketItems[i].price;
+      }
+      this.setSubTotalsSource(new BasketSubtotals(subtotal));
+    }
+  }
+
+  private setSimpleBasketSource(basket: SimpleBasket | null) {
+    this.simpleBasketSource.next(basket);
   }
 
   private setSubTotalsSource(subTotals: BasketSubtotals) {
     this.subtotalsSource.next(subTotals);
   }
 
-  private createBasket(): Basket {
-    const newBasket: Basket = new Basket();
+  private createBasket(): SimpleBasket {
+    const newBasket: SimpleBasket = new SimpleBasket();
 
-    this.setBasketSource(newBasket);
+    this.setSimpleBasketSource(newBasket);
     localStorage.setItem(environment.basketId, newBasket.id);
 
     return newBasket;
   }
 
   private rollBackBasket(): void {
-    this.setBasketSource(this.recordedBasket);
+    this.setSimpleBasketSource(this.simpleBasketBackup);
   }
 
 }

@@ -1,41 +1,57 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {BasketService} from "./basket.service";
-import {environment} from "../../environments/environment";
-import {BasketItem} from "../shared/models/basket";
+import {SimpleBasketItem} from "../shared/models/simpleBasket";
+import {ShopService} from "../shop/shop.service";
+import {ProductBrand} from "../shared/models/product";
+import {MAX_QUANTITY, TAX_RATE} from "../shared/constants";
 
 @Component({
   selector: 'app-basket',
   templateUrl: './basket.component.html',
   styleUrls: ['./basket.component.scss']
 })
-export class BasketComponent {
+export class BasketComponent implements OnInit{
 
-  protected readonly MAX_QUANTITY: number = environment.maxItemQuantity;
-  protected readonly TAX_RATE = environment.taxRate;
+  protected readonly TAX_RATE = TAX_RATE;
 
-  constructor(protected basketService: BasketService) {
+  constructor(protected basketService: BasketService, protected shopService: ShopService) {
   }
 
-  minusQuantity(item: BasketItem): void {
+  ngOnInit(): void {
+    this.basketService.getBasketProducts();
+    this.shopService.getProductBrands();
+    this.shopService.getProductTypes();
+  }
+
+  decrementQuantity(item: SimpleBasketItem): void {
     if (item.quantity > 1) {
       item.quantity -= 1;
       this.basketService.updateBasket();
     }
   }
 
-  plusQuantity(item: BasketItem): void {
-    if (item.quantity < this.MAX_QUANTITY) {
+  incrementQuantity(item: SimpleBasketItem): void {
+    if (item.quantity < MAX_QUANTITY) {
       item.quantity += 1;
       this.basketService.updateBasket();
     }
   }
 
-  confirmDelete(item: BasketItem): void {
+  confirmDelete(index: number): void {
     const isDeleted = confirm('Are you sure you want to remove the item?');
 
     if (isDeleted) {
-      this.basketService.removeItem(item);
+      this.basketService.removeItemByIndex(index);
     }
+  }
+
+  protected getBrandName(productBrandId: number, brands: ProductBrand[]) {
+    return brands.find(brand => brand.id == productBrandId)?.name;
+  }
+
+  protected getTypeName(productTypeId: number, brands: ProductBrand[]) {
+    return brands.find(brand => brand.id == productTypeId)?.name;
+
   }
 
 }

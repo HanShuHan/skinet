@@ -19,7 +19,7 @@
 
   <div class="d-flex flex-row align-items-center">
 
-    <a class="position-relative" routerLink="/basket" *ngIf="(basketService.basketSource$ | async) as basket">
+    <a class="position-relative" routerLink="/basket" *ngIf="(basketService.simpleBasketSource$ | async) as basket">
 
       <i class="fa fa-shopping-cart fa-2x me-5 text-dark"></i>
 

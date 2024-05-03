@@ -1,10 +1,10 @@
-using Core.Entities;
+using Core.Entities.BasketAggregate;
 
 namespace Core.Interfaces;
 
 public interface IBasketRepository
 {
-     Task<CustomerBasket> GetByIdAsync(string id);
-     Task<CustomerBasket> UpdateAsync(CustomerBasket basket);
+     Task<SimpleBasket> GetByIdAsync(string id);
+     Task<SimpleBasket> UpdateAsync(SimpleBasket basket);
      Task<bool> DeleteByIdAsync(string id);
 }

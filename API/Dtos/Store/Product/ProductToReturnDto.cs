@@ -1,4 +1,4 @@
-namespace API.Dtos.Store.Basket.Product
+namespace API.Dtos.Store.Product
 {
     public class ProductToReturnDto
     {
@@ -7,22 +7,22 @@ namespace API.Dtos.Store.Basket.Product
         public string Description { get; set; }
         public decimal Price { get; set; }
         public string PictureUrl { get; set; }
-        public string ProductType { get; set; }
-        public string ProductBrand { get; set; }
+        public int ProductBrandId { get; set; }
+        public int ProductTypeId { get; set; }
 
         public ProductToReturnDto()
         {
         }
 
-        public ProductToReturnDto(Core.Entities.Product product)
+        public ProductToReturnDto(Core.Entities.ProductAggregate.Product product)
         {
             Id = product.Id;
             Name = product.Name;
             Description = product.Description;
             Price = product.Price;
             PictureUrl = product.PictureUrl;
-            ProductType = product.ProductType.Name;
-            ProductBrand = product.ProductBrand.Name;
+            ProductBrandId = product.ProductBrandId;
+            ProductTypeId = product.ProductTypeId;
         }
     }
 }

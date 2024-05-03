@@ -1,6 +1,6 @@
 <div class="container">
 
-  <div class="row" *ngIf="product && (basketService.basketSource$ | async) as basket">
+  <div class="row" *ngIf="product && (basketService.simpleBasketSource$ | async) as basket">
 
     <div class="col-3">
 

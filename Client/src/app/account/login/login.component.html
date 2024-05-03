@@ -5,13 +5,13 @@
   >
     <h2 class="mb-4">Login</h2>
 
-    <app-input-text [type]="'text'"
-                    [abstractControl]="loginForm.get('userName')"
-                    [label]="'Username'"
+    <app-input-text [type]="'email'"
+                    [abstractControl]="loginForm.get('email')"
+                    [label]="'Email'"
                     disabled
     />
 
-    <app-input-text [type]="'password'"
+    <app-input-text [type]="'text'"
                     [abstractControl]="loginForm.get('password')"
                     [label]="'Password'"
     />

@@ -16,9 +16,8 @@ export class RegisterComponent implements OnInit {
   readonly phoneNumberErrorMessage: string = "Phone number should be the pattern of '(111) 222-3333' or '1112223333' or '111'-222-3333'";
   protected errors?: any[];
   protected registerForm: FormGroup = this.formBuilder.group<any>({
-    userName: ['', Validators.required],
-    password: ['', [Validators.required, Validators.pattern(environment.passwordPattern)]],
     email: ['', [Validators.required, Validators.email], this.emailNotInUseAsyncValidator],
+    password: ['', [Validators.required, Validators.pattern(environment.passwordPattern)]],
     phoneNumber: ['', [Validators.required, Validators.pattern(environment.phoneNumberPattern)]],
     displayName: ['', Validators.required]
   });
@@ -27,7 +26,6 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.router.getCurrentNavigation()?.extras?.state);
     this.errors = this.router.getCurrentNavigation()?.extras?.state?.['error']?.errors;
   }
 
@@ -35,6 +33,10 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.valid) {
       this.accountService.register(this.registerForm.value)
         .subscribe({
+          next: user => {
+            this.accountService.updateUser(user);
+            this.router.navigateByUrl('/shop').then();
+          },
           error: err => this.errors = err.errors
         });
     }

@@ -1,10 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Brand, Product, Type} from "../shared/models/product";
+import {Product, ProductBrand, ProductType} from "../shared/models/product";
 import {Pagination} from "../shared/models/pagination";
-import {Observable} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {ProductParams} from "../shared/models/product-params";
-import {SORT_OPTIONS} from "./shop.component";
 import {environment} from "../../environments/environment";
 
 @Injectable({
@@ -13,26 +12,48 @@ import {environment} from "../../environments/environment";
 export class ShopService {
 
   private productsUrl: string = environment.apiUrl + environment.productsPath;
+  // Product brands and types' source
+  private productBrandsSource = new BehaviorSubject<ProductBrand[]>([{id: 0, name: 'All'}]);
+  productBrandsSource$ = this.productBrandsSource.asObservable();
+  private productTypesSource = new BehaviorSubject<ProductType[]>([{id: 0, name: 'All'}]);
+  productTypesSource$ = this.productTypesSource.asObservable();
 
   constructor(private http: HttpClient) {
   }
 
-  public getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(this.productsUrl + id);
+  public getProductById(id: number): Observable<Pagination<Product[]>> {
+    return this.http.get<Pagination<Product[]>>(this.productsUrl + id);
   }
 
-  public getProducts(productParams: ProductParams): Observable<Pagination<Product[]>> {
+  public getProductsByIds(ids: number[]): Observable<Pagination<Product[]>> {
+    const strIds = ids.join(',');
+    return this.http.get<Pagination<Product[]>>(this.productsUrl + strIds);
+  }
+
+  public getProductsWithSpecs(productParams: ProductParams): Observable<Pagination<Product[]>> {
     const params = this.genHttpParams(productParams);
 
     return this.http.get<Pagination<Product[]>>(this.productsUrl, {params: params});
   }
 
-  public getBrands(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.productsUrl + 'brands');
+  public getProductBrands() {
+    if (this.productBrandsSource.getValue().length === 1) {
+      this.http.get<ProductBrand[]>(this.productsUrl + 'brands')
+        .subscribe({
+          next: productBrands => this.productBrandsSource.next([...this.productBrandsSource.getValue(), ...productBrands]),
+          error: err => console.log(err)
+        });
+    }
   }
 
-  public getTypes(): Observable<Type[]> {
-    return this.http.get<Type[]>(this.productsUrl + 'types');
+  public getProductTypes() {
+    if (this.productTypesSource.getValue().length === 1) {
+      this.http.get<ProductBrand[]>(this.productsUrl + 'types')
+        .subscribe({
+          next: productTypes => this.productTypesSource.next([...this.productTypesSource.getValue(), ...productTypes]),
+          error: err => console.log(err)
+        });
+    }
   }
 
   private genHttpParams(productParams: ProductParams): HttpParams {
@@ -47,7 +68,11 @@ export class ShopService {
     if (productParams.searchTerm && productParams.searchTerm.trim().length > 0) {
       params = params.append('search', productParams.searchTerm);
     }
-    if (SORT_OPTIONS.some(option => option.value === productParams.sortBy)) {
+    if ([
+      {name: 'Alphabetical', value: 'name'},
+      {name: 'Price: Low to High', value: 'priceAsc'},
+      {name: 'Price: High to Low', value: 'priceDesc'}
+    ].some(option => option.value === productParams.sortBy)) {
       params = params.append('sort', productParams.sortBy);
     }
     if (productParams.pageIndex > 0) {

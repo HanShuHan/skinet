@@ -14,8 +14,8 @@ export class ProductItemComponent {
   constructor(private basketService: BasketService) {
   }
 
-  addItemToBasket() {
-    this.basketService.addItemToBasket(this.product);
+  addItemToBasket(product: Product) {
+    this.basketService.addItemToBasket(product);
   }
 
 }

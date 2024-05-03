@@ -4,10 +4,8 @@ import {ShopService} from "../shop.service";
 import {ActivatedRoute} from "@angular/router";
 import {BreadcrumbService} from "xng-breadcrumb";
 import {BasketService} from "../../basket/basket.service";
-import {environment} from "../../../environments/environment";
-import {BasketItem} from "../../shared/models/basket";
-
-const MAX_QUANTITY: number = environment.maxItemQuantity;
+import {SimpleBasketItem} from "../../shared/models/simpleBasket";
+import {MAX_QUANTITY} from "../../shared/constants";
 
 @Component({
   selector: 'app-product-details',
@@ -27,9 +25,9 @@ export class ProductDetailsComponent implements OnInit {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
 
     if (id) {
-      this.shopService.getProduct(parseInt(id)).subscribe({
+      this.shopService.getProductById(parseInt(id)).subscribe({
         next: response => {
-          this.product = response;
+          this.product = response.data[0];
           this.breadcrumbService.set('@productDetails', this.product.name);
         },
         error: err => console.log(err)
@@ -52,8 +50,7 @@ export class ProductDetailsComponent implements OnInit {
       this.quantity += 1;
     }
   }
-
-  getNumberOfItemsInBasket(id: number, items: BasketItem[]) {
-    return items.find((item) => item.id === id)?.quantity;
+  getNumberOfItemsInBasket(id: number, items: SimpleBasketItem[]) {
+    return items.find((item) => item.productId === id)?.quantity;
   }
 }

@@ -21,10 +21,8 @@ export const environment = {
   },
   home: 'Home',
   basketId: 'basket_id',
-  maxItemQuantity: 999,
-  taxRate: 0.05,
   token: "token",
   bearer: 'Bearer',
-  passwordPattern: '(?=^.{6,10}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;\'?/&gt;.&lt;,])(?!.*\\s).*$',
+  passwordPattern: "(?=^.{6,10}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;'?/&gt;.&lt;,])(?!.*\\s).*$",
   phoneNumberPattern: '^\\D?(\\d{3})\\D?\\D?(\\d{3})\\D?(\\d{4})$'
 };

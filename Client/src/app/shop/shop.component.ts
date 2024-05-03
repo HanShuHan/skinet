@@ -1,16 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Brand, Option, Product, Type} from "../shared/models/product";
+import {Option, Product} from "../shared/models/product";
 import {ShopService} from "./shop.service";
 import {ProductParams} from "../shared/models/product-params";
 import {NgxSpinnerService} from "ngx-spinner";
 import {Router} from "@angular/router";
-
-export const SORT_OPTIONS: Option[] = [
-  {name: 'Alphabetical', value: 'name'},
-  {name: 'Price: Low to High', value: 'priceAsc'},
-  {name: 'Price: High to Low', value: 'priceDesc'}
-];
-const OPTION_ALL = {id: 0, name: 'All'};
 
 @Component({
   selector: 'app-shop',
@@ -20,23 +13,25 @@ const OPTION_ALL = {id: 0, name: 'All'};
 
 export class ShopComponent implements OnInit {
 
-  productParams: ProductParams = new ProductParams();
+  sortOptions: Option[] = [
+    {name: 'Alphabetical', value: 'name'},
+    {name: 'Price: Low to High', value: 'priceAsc'},
+    {name: 'Price: High to Low', value: 'priceDesc'}
+  ];
   products?: Product[];
-  brands: Brand[] = [OPTION_ALL];
-  types: Type[] = [OPTION_ALL];
-  sortOptions: Option[] = SORT_OPTIONS;
+  productParams: ProductParams = new ProductParams();
 
-  constructor(private router: Router, private shopService: ShopService, private spinnerService: NgxSpinnerService) {
+  constructor(private router: Router, protected shopService: ShopService, private spinnerService: NgxSpinnerService) {
   }
 
   ngOnInit(): void {
     this.getProducts();
-    this.getBrands();
-    this.getTypes();
+    this.shopService.getProductBrands();
+    this.shopService.getProductTypes();
   }
 
   private getProducts() {
-    this.shopService.getProducts(this.productParams)
+    this.shopService.getProductsWithSpecs(this.productParams)
       .subscribe({
         next: response => {
           this.products = response.data;
@@ -47,21 +42,21 @@ export class ShopComponent implements OnInit {
       });
   }
 
-  private getBrands() {
-    this.shopService.getBrands()
-      .subscribe({
-        next: response => this.brands = [...this.brands, ...response],
-        error: err => console.log(err),
-      });
-  }
+  // private getBrands() {
+  //   this.shopService.getProductBrands()
+  //     .subscribe({
+  //       next: response => this.brands = [...this.brands, ...response],
+  //       error: err => console.log(err),
+  //     });
+  // }
 
-  private getTypes() {
-    this.shopService.getTypes()
-      .subscribe({
-        next: response => this.types = [...this.types, ...response],
-        error: err => console.log(err),
-      });
-  }
+  // private getTypes() {
+  //   this.shopService.getTypes()
+  //     .subscribe({
+  //       next: response => this.types = [...this.types, ...response],
+  //       error: err => console.log(err),
+  //     });
+  // }
 
   onBrandSelected(brandId: number) {
     if (this.productParams.brandId != brandId) {

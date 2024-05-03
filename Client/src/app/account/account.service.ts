@@ -18,14 +18,8 @@ export class AccountService {
     this.loadUserByLocalToken();
   }
 
-  register(registryForm: RegistryForm): Observable<void> {
-    return this.httpClient.post<User>(this.baseUrl + 'register', registryForm)
-      .pipe(
-        map(user => {
-          this.updateUser(user);
-          this.router.navigateByUrl('/shop').then();
-        })
-      );
+  register(registryForm: RegistryForm): Observable<User> {
+    return this.httpClient.post<User>(this.baseUrl + 'register', registryForm);
   }
 
   login(loginForm: LoginForm): Observable<void> {
@@ -70,7 +64,7 @@ export class AccountService {
     this.userSource.next(user);
   }
 
-  private updateUser(user: User) {
+  public updateUser(user: User) {
     this.setUserSource(user);
     localStorage.setItem(environment.token, user.token);
   }
