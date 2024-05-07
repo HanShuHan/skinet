@@ -1,0 +1,64 @@
+<div>
+
+  <ul class="nav nav-pills nav-justified">
+
+    <!--    <li class="nav-item bg-warning">-->
+    <!--      <button class="nav-link" cdkStepperPrevious>Previous</button>-->
+    <!--    </li>-->
+
+    <li class="nav-item bg-orange-100" *ngFor="let step of steps; let i = index">
+
+      <button class="nav-link"
+              (click)="selectStep(i)"
+              [class.active]="selectedIndex === i"
+              [class.bg-success]="step.completed && (selectedIndex !== i)"
+              [class.text-white]="step.completed && (selectedIndex !== i)"
+      >
+        {{ step.label | uppercase }}
+      </button>
+
+    </li>
+
+    <!--    <li class="nav-item bg-warning">-->
+    <!--      <button class="nav-link" cdkStepperNext>Next</button>-->
+    <!--    </li>-->
+
+  </ul>
+
+  <div class="mt-4">
+
+    <ng-container [ngTemplateOutlet]="selected!.content"></ng-container>
+
+  </div>
+
+  <div class="d-flex justify-content-between mt-2.5">
+
+    <button *ngIf="selectedIndex === 0; else prevStepButton"
+            class="btn btn-outline-primary"
+            [routerLink]="prevPageUrl"
+    >
+      <i class="fa fa-arrow-left"></i> {{firstStepPrevButtonLabel}}
+    </button>
+
+    <ng-template #prevStepButton>
+      <button class="btn btn-outline-primary fa fa-arrow-left" cdkStepperPrevious></button>
+    </ng-template>
+
+    <button *ngIf="selectedIndex < (steps.length - 1); else finalStepButton"
+            class="btn btn-primary fa fa-arrow-right"
+            cdkStepperNext
+            [disabled]="!selected!.completed"
+    ></button>
+
+    <ng-template #finalStepButton>
+      <button class="btn btn-primary"
+              (click)="submitForm()"
+      >
+        {{lastStepNextButtonLabel}} <i class="fa fa-arrow-right"></i>
+      </button>
+    </ng-template>
+
+  </div>
+
+</div>
+

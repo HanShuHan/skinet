@@ -34,7 +34,7 @@ public class TokenService : ITokenService
             Audience = _config["Token:Audience"],
             TokenType = _config["Token:Type"],
             IssuedAt = DateTime.Now,
-            Expires = DateTime.Now.AddSeconds(1),
+            Expires = DateTime.Now.AddDays(30),
             SigningCredentials = credentials
         };
         var tokenHandler = new JwtSecurityTokenHandler();

@@ -65,7 +65,7 @@ public class OrdersController : UserApiController
         return Ok(_mapper.Map<Order, OrderToReturnDto>(order));
     }
 
-    [AllowAnonymous]
+    // [AllowAnonymous]
     [HttpGet("deliveryMethods")]
     public async Task<ActionResult<IReadOnlyList<DeliveryMethodToReturnDto>>> GetDeliveryMethods()
     {

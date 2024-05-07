@@ -1,7 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {BasketService} from "../../basket/basket.service";
-import {SimpleBasketItem} from "../../shared/models/simpleBasket";
+import {SimpleBasketItem} from "../../shared/models/simple-basket";
 import {AccountService} from "../../account/account.service";
+import {environment} from "../../../environments/environment";
 
 @Component({
   selector: 'app-nav-bar',

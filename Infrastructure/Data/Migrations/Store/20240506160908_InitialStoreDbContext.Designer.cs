@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations.Store
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20240503043955_InitialStoreDbContext")]
+    [Migration("20240506160908_InitialStoreDbContext")]
     partial class InitialStoreDbContext
     {
         /// <inheritdoc />
@@ -148,6 +148,9 @@ namespace Infrastructure.Data.Migrations.Store
 
                     b.Property<double>("Price")
                         .HasColumnType("decimal(18, 2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ProductName")
                         .IsRequired()

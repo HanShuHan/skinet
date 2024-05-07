@@ -24,7 +24,8 @@ public class Order : BaseEntity
 
     public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
 
-    [NotMapped] private DeliveryMethod _deliveryMethod;
+
+    [NotMapped] private DeliveryMethod _deliveryMethod { get; set; }
 
     public DeliveryMethod DeliveryMethod
     {
@@ -38,6 +39,7 @@ public class Order : BaseEntity
 
     public int DeliveryMethodId { get; set; }
 
+
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
 
     [NotMapped] public decimal Subtotal { get; set; }
@@ -48,12 +50,12 @@ public class Order : BaseEntity
     {
     }
 
-    public Order(string appUserId, IList<OrderItem> orderItems, ShippingAddress shippingAddress, int deliveryMethodId)
+    public Order(string appUserId, IList<OrderItem> orderItems, ShippingAddress shippingAddress, DeliveryMethod deliveryMethod)
     {
         AppUserId = appUserId;
         OrderItems = orderItems;
         ShippingAddress = shippingAddress;
-        DeliveryMethodId = deliveryMethodId;
+        DeliveryMethod = deliveryMethod;
     }
 
     private void CalculateSubtotal()

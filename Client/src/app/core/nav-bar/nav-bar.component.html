@@ -19,11 +19,17 @@
 
   <div class="d-flex flex-row align-items-center">
 
-    <a class="position-relative" routerLink="/basket" *ngIf="(basketService.simpleBasketSource$ | async) as basket">
+    <a class="position-relative" routerLink="/basket">
 
       <i class="fa fa-shopping-cart fa-2x me-5 text-dark"></i>
 
-      <div class="cart-no">{{ getCount(basket.items) }}</div>
+      <ng-container *ngIf="(basketService.simpleBasketSource$ | async) as basket; else noBasketItems">
+        <div class="cart-no">{{ getCount(basket.items) }}</div>
+      </ng-container>
+
+      <ng-template #noBasketItems>
+        <div class="cart-no">0</div>
+      </ng-template>
 
     </a>
 
@@ -36,7 +42,6 @@
         <span class="position-absolute -top-0.5">{{ (user.displayName || user.email) }}</span>
 
       </div>
-
 
     </ng-container>
 

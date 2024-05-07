@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {Router} from "@angular/router";
-import {environment} from "../../../environments/environment";
-import {ErrorResponse} from "../../shared/models/ErrorResponse";
+import {ErrorResponse} from "../../shared/models/error-response";
+import {ApiUrl} from "../../../constants/api.constants";
 
 @Component({
   selector: 'app-error',
@@ -18,7 +18,7 @@ export class ErrorComponent {
     if (error) {
       this.error = error;
     } else {
-      this.router.navigateByUrl(environment.apiUrl).then();
+      this.router.navigateByUrl(ApiUrl.base).then();
     }
   }
 

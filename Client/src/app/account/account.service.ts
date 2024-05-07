@@ -1,29 +1,29 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, map, Observable} from "rxjs";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {LoginForm, RegistryForm, User} from "../shared/models/user";
+import {Address, LoginForm, RegistryForm, User} from "../shared/models/user";
 import {environment} from "../../environments/environment";
 import {Router} from "@angular/router";
+import {ApiUrl} from "../../constants/api.constants";
+import {add} from "ngx-bootstrap/chronos";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountService {
 
-  private baseUrl = environment.apiUrl + environment.accountPath;
   private userSource: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
-  public userSource$: Observable<User | null> = this.userSource.asObservable();
+  userSource$: Observable<User | null> = this.userSource.asObservable();
 
   constructor(private httpClient: HttpClient, private router: Router) {
-    this.loadUserByLocalToken();
   }
 
   register(registryForm: RegistryForm): Observable<User> {
-    return this.httpClient.post<User>(this.baseUrl + 'register', registryForm);
+    return this.httpClient.post<User>(ApiUrl.register, registryForm);
   }
 
   login(loginForm: LoginForm): Observable<void> {
-    return this.httpClient.post<User>(this.baseUrl + 'login', loginForm)
+    return this.httpClient.post<User>(ApiUrl.login, loginForm)
       .pipe(
         map(user => {
           if (user) {
@@ -41,17 +41,23 @@ export class AccountService {
 
   checkEmailNotInUse(email: string): Observable<boolean> {
     const params = new HttpParams().set('email', email);
-    return this.httpClient.get<boolean>(this.baseUrl + environment.paths.emailNotInUse, {params});
+    return this.httpClient.get<boolean>(ApiUrl.checkEmailNotInUse, {params});
   }
 
-  private loadUserByLocalToken() {
+  updateAddress(address: Address) {
+    return this.httpClient.put<Address>(ApiUrl.address, address);
+  }
+
+  loadUserByLocalToken() {
     const userToken = localStorage.getItem(environment.token);
+
     if (userToken) {
       const headers = new HttpHeaders().set('Authorization', `${environment.bearer} ${userToken}`);
-      this.httpClient.get<User>(this.baseUrl, {headers})
+      this.httpClient.get<User>(ApiUrl.account, {headers})
         .subscribe({
           next: user => {
             if (user) {
+              console.log(0)
               this.updateUser(user);
             }
           },
@@ -64,7 +70,11 @@ export class AccountService {
     this.userSource.next(user);
   }
 
-  public updateUser(user: User) {
+  getCurrentUser() {
+    return this.userSource.value;
+  }
+
+  updateUser(user: User) {
     this.setUserSource(user);
     localStorage.setItem(environment.token, user.token);
   }

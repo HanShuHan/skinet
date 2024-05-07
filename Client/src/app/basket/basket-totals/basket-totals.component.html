@@ -1,0 +1,53 @@
+<ng-container *ngIf="(basketService.subtotalsSource$ | async) as subTotals">
+
+  <div class="container">
+
+    <h5 class="text-uppercase bg-warning fw-bold p-1 mb-4">
+
+      Order Summary
+
+    </h5>
+
+    <ul class="list-unstyled">
+
+      <li class="d-flex justify-content-between p-2">
+
+        <h5>Subtotal</h5>
+
+        <h5>
+
+          {{ subTotals.subTotal | currency : 'USD' : 'symbol' : '.1-2' }}
+
+        </h5>
+
+      </li>
+
+      <li class="d-flex justify-content-between p-2">
+
+        <h5>Tax <span class="text-info">({{ TAX_RATE * 100 | number : '.1-2' }}%)</span></h5>
+
+        <h5>{{ subTotals.tax  | currency : 'USD' : 'symbol' : '.1-2' }}</h5>
+
+      </li>
+
+      <li class="d-flex justify-content-between p-2 border-bottom border-info">
+
+        <h5>Shipping</h5>
+
+        <h5>{{ (subTotals.shipping === undefined) ? '–' : (subTotals.shipping | currency : 'USD' : 'symbol' : '.1-2') }}</h5>
+
+      </li>
+
+      <li class="d-flex justify-content-between p-2">
+
+        <h5>Total</h5>
+
+        <h5>{{ subTotals.total | currency : 'USD' : 'symbol' : '.1-2' }}</h5>
+
+      </li>
+
+    </ul>
+
+  </div>
+
+</ng-container>

@@ -1,0 +1,45 @@
+<ng-container *ngIf="deliveryForm && deliveryMethods">
+
+  <div>
+
+    <div class="d-flex justify-content-between align-items-center">
+
+      <h4 class="form-title">Delivery Methods</h4>
+
+    </div>
+
+    <div class="row justify-content-between" [formGroup]="deliveryForm">
+
+      <div class="col-6 mb-4" *ngFor="let deliveryMethod of deliveryMethods">
+
+        <div class="bg-gray-200 p-3">
+
+          <input type="radio"
+                 class="form-check-input"
+                 id="{{deliveryMethod.id}}"
+                 value="{{deliveryMethod.id}}"
+                 formControlName="deliveryMethod"
+                 (change)="selectShippingMethod(deliveryMethod.id)"
+          >
+
+          <label class="ms-2" for="{{deliveryMethod.id}}">
+
+            <h5 class="text-purple-400">{{ deliveryMethod.name }}</h5>
+
+            <h6>Estimated: <span class="text-green-800">{{ deliveryMethod.approximatedDeliveryDays }}</span></h6>
+
+            <h6>Price:
+              <span class="text-orange-600">{{ deliveryMethod.price | currency : 'USD' : 'symbol' : '.1-2' }}</span>
+            </h6>
+
+          </label>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ng-container>

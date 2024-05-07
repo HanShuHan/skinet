@@ -14,6 +14,7 @@ export class LoginComponent {
     email: ['', [Validators.required, Validators.email]],
     password: ['', Validators.required]
   });
+  protected error?: any;
 
   constructor(private formBuilder: FormBuilder, private accountService: AccountService, private activatedRoute: ActivatedRoute, private router: Router) {
   }
@@ -25,7 +26,7 @@ export class LoginComponent {
           next: () => {
             this.navigate();
           },
-          error: err => console.log(err)
+          error: err => this.error = err
         });
     }
   }

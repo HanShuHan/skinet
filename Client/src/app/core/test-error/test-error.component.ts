@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {environment} from "../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
+import {ApiUrl} from "../../../constants/api.constants";
 
 @Component({
   selector: 'app-test-error',
@@ -9,7 +10,6 @@ import {HttpClient} from "@angular/common/http";
 })
 export class TestErrorComponent {
 
-  private productsUrl: string = environment.apiUrl + environment.productsPath;
   errMessages?: string[] = [];
 
   constructor(private http: HttpClient) {
@@ -18,7 +18,7 @@ export class TestErrorComponent {
   get400BadRequestError() {
     const id = 'ABC';
 
-    this.http.get(this.productsUrl + id).subscribe({
+    this.http.get(ApiUrl.products + id).subscribe({
       error: err => {
         console.log(err);
         if (err.errors) {
@@ -31,19 +31,19 @@ export class TestErrorComponent {
   get404ProductNotFoundError() {
     const id = 999;
 
-    this.http.get(this.productsUrl + id).subscribe({
+    this.http.get(ApiUrl.products + id).subscribe({
       error: err => console.log(err)
     });
   }
 
   get404PageNotFoundError() {
-    this.http.get(environment.apiUrl + 'NoSuchService').subscribe({
+    this.http.get(ApiUrl.base + 'NoSuchService').subscribe({
       error: err => console.log(err)
     });
   }
 
   get500InternalServerError() {
-    this.http.get(environment.apiUrl + 'buggy/servererror').subscribe({
+    this.http.get(ApiUrl.base + 'buggy/servererror').subscribe({
       error: err => console.log(err)
     });
   }

@@ -42,22 +42,6 @@ export class ShopComponent implements OnInit {
       });
   }
 
-  // private getBrands() {
-  //   this.shopService.getProductBrands()
-  //     .subscribe({
-  //       next: response => this.brands = [...this.brands, ...response],
-  //       error: err => console.log(err),
-  //     });
-  // }
-
-  // private getTypes() {
-  //   this.shopService.getTypes()
-  //     .subscribe({
-  //       next: response => this.types = [...this.types, ...response],
-  //       error: err => console.log(err),
-  //     });
-  // }
-
   onBrandSelected(brandId: number) {
     if (this.productParams.brandId != brandId) {
       this.productParams.brandId = brandId;

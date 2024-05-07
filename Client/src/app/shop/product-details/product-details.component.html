@@ -1,6 +1,6 @@
 <div class="container">
 
-  <div class="row" *ngIf="product && (basketService.simpleBasketSource$ | async) as basket">
+  <div class="row">
 
     <div class="col-3">
 
@@ -35,9 +35,11 @@
           Add to Cart
         </a>
 
-        <span *ngIf="getNumberOfItemsInBasket(product.id, basket.items) as numberOfItems" class="text-info">
-          You have <strong>{{ numberOfItems }}</strong> of this item in your basket
-        </span>
+        <ng-container *ngIf="product && (basketService.simpleBasketSource$ | async) as basket">
+          <span *ngIf="getNumberOfItemsInBasket(product.id, basket.items) as numberOfItems" class="text-info">
+            You have <strong>{{ numberOfItems }}</strong> of this item in your basket
+          </span>
+        </ng-container>
 
       </div>
 

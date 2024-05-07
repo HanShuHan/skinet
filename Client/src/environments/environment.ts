@@ -1,8 +1,9 @@
 export const environment = {
   production: true,
   apiUrl: 'https://localhost:5001/api/',
-  paths: {
-    emailNotInUse: 'emailNotInUse'
+  path: {
+    emailNotInUse: 'emailNotInUse',
+    account: 'account/',
   },
   productsPath: 'products/',
   basketPath: 'basket/',
@@ -14,12 +15,11 @@ export const environment = {
     resetTimeoutOnDuplicate: true,
     includeTitleDuplicates: true,
     newestOnTop: true,
-    timeout: 5000,
+    timeout: 2500,
     extendedTimeOut: 3000,
     easeTime: 500,
     positionClass: 'toast-bottom-right'
   },
-  home: 'Home',
   basketId: 'basket_id',
   token: "token",
   bearer: 'Bearer',

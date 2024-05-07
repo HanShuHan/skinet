@@ -8,13 +8,18 @@
     <app-input-text [type]="'email'"
                     [abstractControl]="loginForm.get('email')"
                     [label]="'Email'"
-                    disabled
     />
 
-    <app-input-text [type]="'text'"
+    <app-input-text [type]="'password'"
                     [abstractControl]="loginForm.get('password')"
                     [label]="'Password'"
     />
+
+    <span *ngIf="error" class="text-red-500 text-xl">
+
+      Email or password is incorrect
+
+    </span>
 
     <input type="submit"
            class="btn btn-lg btn-success w-100"

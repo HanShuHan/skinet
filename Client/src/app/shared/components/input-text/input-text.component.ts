@@ -8,7 +8,7 @@ import {AbstractControl, FormControl} from "@angular/forms";
 })
 export class InputTextComponent {
 
-  @Input() abstractControl?: AbstractControl<any> | null;
+  @Input() abstractControl?: AbstractControl | null;
   @Input() label: string = 'Column';
   @Input() type: 'text' | 'email' | 'password' | 'tel' | 'url' = 'text';
   @Input() passwordErrorMessage: string = 'Password should be complex enough';

@@ -11,13 +11,16 @@ export class ErrorInterceptor implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse, caught) => {
         if (err) {
           const error = err.error;
 
           if (err.status === 400 && error.errors) {
-            throw err.error;
+            throw error;
+          } else if (err.status === 401) {
+            throw error;
           } else {
             const extras: NavigationExtras = {state: {error: error}};
 

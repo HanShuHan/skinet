@@ -4,8 +4,8 @@ import {ShopService} from "../shop.service";
 import {ActivatedRoute} from "@angular/router";
 import {BreadcrumbService} from "xng-breadcrumb";
 import {BasketService} from "../../basket/basket.service";
-import {SimpleBasketItem} from "../../shared/models/simpleBasket";
-import {MAX_QUANTITY} from "../../shared/constants";
+import {SimpleBasketItem} from "../../shared/models/simple-basket";
+import {MAX_QUANTITY} from "../../../constants/number.constants";
 
 @Component({
   selector: 'app-product-details',
@@ -18,7 +18,6 @@ export class ProductDetailsComponent implements OnInit {
   quantity: number = 1;
 
   constructor(private shopService: ShopService, private activatedRoute: ActivatedRoute, private breadcrumbService: BreadcrumbService, protected basketService: BasketService) {
-    this.breadcrumbService.set('@productDetails', ' ');
   }
 
   ngOnInit(): void {

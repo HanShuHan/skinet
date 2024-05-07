@@ -2,7 +2,8 @@ export const environment = {
   production: false,
   apiUrl: 'api/',
   paths: {
-    emailNotUsed: 'emailNotUsed'
+    emailNotUsed: 'emailNotUsed',
+    account: 'account/',
   },
   productsPath: 'products/',
   basketPath: 'basket/',
@@ -18,7 +19,6 @@ export const environment = {
     easeTime: 500,
     positionClass: 'toast-bottom-right'
   },
-  home: 'Home',
   basketId: 'basket_id',
   token: "token",
   bearer: 'Bearer',

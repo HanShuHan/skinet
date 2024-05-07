@@ -33,12 +33,15 @@ public class OrderService : IOrderService
         foreach (var basketItem in basket.Items)
         {
             var product = await _productService.GetProductByIdWithBrandAndTypeAsync(basketItem.ProductId);
-            var orderItem = new OrderItem(product.Id, product.Name, product.Description, product.Price, product.PictureUrl,
+            var orderItem = new OrderItem(product.Id, product.Name, product.Description, product.Price,
+                product.PictureUrl,
                 product.ProductBrand.Name, product.ProductType.Name, basketItem.Quantity);
             orderItems.Add(orderItem);
         }
 
-        var order = new Order(userId, orderItems, shippingAddress, deliveryMethodId);
+        var deliveryMethod = await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryMethodId);
+
+        var order = new Order(userId, orderItems, shippingAddress, deliveryMethod);
         _unitOfWork.Repository<Order>().Add(order);
 
         var changes = await _unitOfWork.Complete();

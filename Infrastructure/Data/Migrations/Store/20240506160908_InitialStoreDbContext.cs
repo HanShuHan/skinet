@@ -124,6 +124,7 @@ namespace Infrastructure.Data.Migrations.Store
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    ProductId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true),
                     Price = table.Column<double>(type: "decimal(18, 2)", nullable: false),

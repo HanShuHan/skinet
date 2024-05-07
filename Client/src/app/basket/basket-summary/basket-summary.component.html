@@ -1,0 +1,150 @@
+<ng-container *ngIf="(basketService.simpleBasketSource$ | async) as simpleBasket">
+  <ng-container *ngIf="(basketService.basketItemsSource$ | async) as basketItems">
+    <ng-container *ngIf="(shopService.productBrandsSource$ | async) as brands">
+      <ng-container *ngIf="(shopService.productTypesSource$ | async) as types">
+
+        <div class="d-flex row-cols-2 justify-content-between mb-4">
+
+          <table class="table-responsive align-middle text-center col me-2">
+
+            <thead class="text-uppercase flex">
+
+            <tr>
+
+              <th>Product</th>
+
+              <th></th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr *ngFor="let item of basketItems"
+                class="border-bottom border-secondary"
+            >
+
+              <td>
+
+                <a *ngIf="isBasket; else nonActiveProductImage"
+                   class="text-decoration-none"
+                   routerLink="/shop/{{item.id}}"
+                >
+                  <img [ngSrc]="item.pictureUrl" [alt]="item.name"
+                       width="100" height="100"
+                       class="mw-100 mh-100 img-fluid text-decoration-none"
+                  >
+                </a>
+
+                <ng-template #nonActiveProductImage>
+                  <img [ngSrc]="item.pictureUrl" [alt]="item.name"
+                       width="100" height="100"
+                       class="mw-100 mh-100 img-fluid text-decoration-none"
+                  >
+                </ng-template>
+
+              </td>
+
+              <td class="text-start">
+
+                <a *ngIf="isBasket; else nonActiveProductName"
+                   class="text-decoration-none"
+                   routerLink="/shop/{{item.id}}"
+                >
+                  <h4 class="text-primary fw-bold mb-3">
+                    {{ item.name }}
+                  </h4>
+                </a>
+
+                <ng-template #nonActiveProductName>
+                  <h4 class="text-primary fw-bold mb-3">
+                    {{ item.name }}
+                  </h4>
+                </ng-template>
+
+                <h5>Brand: {{ getBrandName(item.productBrandId, brands) }}</h5>
+
+                <h5>Type: {{ getTypeName(item.productTypeId, types) }}</h5>
+
+              </td>
+
+            </tr>
+
+            </tbody>
+
+          </table>
+
+          <table class="table-responsive align-middle text-center col">
+
+            <thead class="text-uppercase">
+
+            <tr>
+
+              <th>Price</th>
+
+              <th>Quantity</th>
+
+              <th>Total</th>
+
+              <th *ngIf="isBasket">Remove</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr class="border-bottom border-secondary"
+                *ngFor="let item of basketItems; let i = index"
+            >
+
+              <td class="fs-5">
+                  {{ item.price | currency :'USD' : 'symbol' : '.1-2' }}
+              </td>
+
+              <td class="fs-5 align-middle">
+
+                <div class="d-flex align-items-center"
+                     [class.justify-content-between]="isBasket"
+                     [class.justify-content-center]="!isBasket"
+                >
+
+                  <a *ngIf="isBasket" (click)="decrementQuantity(simpleBasket.items[i])">
+                    <i class="fa fa-minus-circle text-warning fa-2x"></i>
+                  </a>
+
+                  <span class="text-center">{{ simpleBasket.items[i].quantity }}</span>
+
+                  <a *ngIf="isBasket" (click)="incrementQuantity(simpleBasket.items[i])">
+                    <i class="fa fa-plus-circle text-warning fa-2x"></i>
+                  </a>
+
+                </div>
+
+              </td>
+
+              <td class="fs-5">
+                  {{ item.price * simpleBasket.items[i].quantity | currency :'USD' : 'symbol' : '.1-2' }}
+              </td>
+
+              <td *ngIf="isBasket">
+
+                <a (click)="confirmDelete(i)">
+                  <i class="fa fa-trash text-danger fa-2x"></i>
+                </a>
+
+              </td>
+
+            </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </ng-container>
+    </ng-container>
+  </ng-container>
+</ng-container>

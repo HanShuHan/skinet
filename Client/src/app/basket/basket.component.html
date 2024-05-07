@@ -1,212 +1,45 @@
-<div class="container">
+<ng-container *ngIf="(basketService.basketItemsSource$ | async) as basketItems; else noBasketItems">
 
-  <ng-container *ngIf="(basketService.simpleBasketSource$ | async) as simpleBasket">
-    <ng-container *ngIf="(basketService.basketItemsSource$ | async) as basketItems">
+  <div class="container">
 
-      <h2 *ngIf="basketItems.length === 0; else basketDetails">
+    <h2 *ngIf="basketItems?.length === 0; else basketDetails">
 
-        There are no items in your basket
+      There are no items in your basket
 
-      </h2>
+    </h2>
 
-      <ng-template #basketDetails>
+    <ng-template #basketDetails>
 
-        <ng-container *ngIf="(shopService.productBrandsSource$ | async) as brands">
-          <ng-container *ngIf="(shopService.productTypesSource$ | async) as types">
+      <app-basket-summary/>
 
-            <div class="d-flex row-cols-2 justify-content-between">
+      <div class="d-flex mt-5 ms-3 text-center">
 
-              <table class=" table-responsive align-middle text-center col me-2">
+        <div class="col-6 offset-6">
 
-                <thead class="text-uppercase">
+          <app-basket-totals/>
 
-                <tr>
+          <button class="btn btn-outline-success w-100 fs-4"
+                  routerLink="/checkout"
+          >
+            Proceed to Checkout
+          </button>
 
-                  <th>Product</th>
+        </div>
 
-                  <th></th>
+      </div>
 
-                </tr>
+    </ng-template>
 
-                </thead>
+  </div>
 
-                <tbody>
+</ng-container>
 
-                <tr *ngFor="let item of basketItems"
-                    class="border-bottom border-secondary"
-                >
+<ng-template #noBasketItems>
 
-                  <td>
-                    <a class="text-decoration-none"
-                       routerLink="/shop/{{item.id}}"
-                    >
-                      <img [ngSrc]="item.pictureUrl" [alt]="item.name"
-                           width="100" height="100"
-                           class="mw-100 mh-100 img-fluid text-decoration-none"
-                      >
-                    </a>
-                  </td>
+  <h2>
 
-                  <td class="text-start">
+    There are no items in your basket
 
-                    <a class="text-decoration-none"
-                       routerLink="/shop/{{item.id}}"
-                    >
-                      <h4 class="text-primary fw-bold mb-3">
-                        {{ item.name }}
-                      </h4>
-                    </a>
+  </h2>
 
-                    <h5>Brand: {{ getBrandName(item.productBrandId, brands) }}</h5>
-
-                    <h5>Type: {{ getTypeName(item.productTypeId, types) }}</h5>
-
-                  </td>
-
-                </tr>
-
-                </tbody>
-
-              </table>
-
-              <table class=" table-responsive align-middle text-center col">
-
-                <thead class="text-uppercase">
-
-                <tr>
-
-                  <th>Price</th>
-
-                  <th>Quantity</th>
-
-                  <th>Total</th>
-
-                  <th>Remove</th>
-
-                </tr>
-
-                </thead>
-
-                <tbody>
-
-                <tr class="border-bottom border-secondary"
-                    *ngFor="let item of basketItems; let i = index"
-                >
-
-                  <td class="fs-5">
-                    <strong>
-                      {{ item.price | currency :'USD' : 'symbol' : '.1-2' }}
-                    </strong>
-                  </td>
-
-                  <td class="fs-5 align-middle">
-
-                    <div class="d-flex align-items-center justify-content-between">
-
-                      <a (click)="decrementQuantity(simpleBasket.items[i])">
-                        <i class="fa fa-minus-circle text-warning fa-2x"></i>
-                      </a>
-
-                      <strong>{{ simpleBasket.items[i].quantity }}</strong>
-
-                      <a (click)="incrementQuantity(simpleBasket.items[i])">
-                        <i class="fa fa-plus-circle text-warning fa-2x"></i>
-                      </a>
-
-                    </div>
-
-                  </td>
-
-                  <td class="fs-5">
-                    <strong>
-                      {{ item.price * simpleBasket.items[i].quantity | currency :'USD' : 'symbol' : '.1-2' }}
-                    </strong>
-                  </td>
-
-                  <td>
-
-                    <a (click)="confirmDelete(i)">
-                      <i class="fa fa-trash text-danger fa-2x"></i>
-                    </a>
-
-                  </td>
-
-                </tr>
-
-                </tbody>
-
-              </table>
-
-            </div>
-
-            <div class="d-flex mt-5 ms-3 text-center" *ngIf="(basketService.subtotalsSource$ | async) as subTotals">
-
-              <div class="col-6 offset-6">
-
-                <h4 class="text-uppercase bg-warning fw-bold p-1 mb-4">
-
-                  Order Summary
-
-                </h4>
-
-                <ul class="list-unstyled">
-
-                  <li class="d-flex justify-content-between p-2">
-
-                    <h4>Subtotal</h4>
-
-                    <h4>
-
-                      {{ subTotals.subTotal | currency : 'USD' : 'symbol' : '.1-2' }}
-
-                    </h4>
-
-                  </li>
-
-                  <li class="d-flex justify-content-between p-2">
-
-                    <h4>Tax <span class="text-info">({{ TAX_RATE * 100 | number : '.1-2' }}%)</span></h4>
-
-                    <h4>{{ subTotals.tax  | currency : 'USD' : 'symbol' : '.1-2' }}</h4>
-
-                  </li>
-
-                  <li class="d-flex justify-content-between p-2 border-bottom border-info">
-
-                    <h4>Shipping</h4>
-
-                    <h4>{{ subTotals.shipping | currency : 'USD' : 'symbol' : '.1-2' }}</h4>
-
-                  </li>
-
-                  <li class="d-flex justify-content-between p-2">
-
-                    <h4>Total</h4>
-
-                    <h4>{{ subTotals.getTotal() | currency : 'USD' : 'symbol' : '.1-2' }}</h4>
-
-                  </li>
-
-                </ul>
-
-                <button class="btn btn-outline-success w-100 fs-4"
-                        routerLink="/checkout"
-                >
-
-                  Proceed to Checkout
-
-                </button>
-
-              </div>
-
-            </div>
-
-          </ng-container>
-        </ng-container>
-
-      </ng-template>
-
-    </ng-container>
-  </ng-container>
-
-</div>
+</ng-template>

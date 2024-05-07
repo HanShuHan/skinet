@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {map, Observable} from 'rxjs';
 import {AccountService} from "../../account/account.service";
-import {environment} from "../../../environments/environment";
+import {ApiPath} from "../../../constants/api.constants";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +15,7 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> {
+
     return this.accountService.userSource$
       .pipe(
         map(user => {
@@ -22,7 +23,7 @@ export class AuthGuard implements CanActivate {
             return true;
           } else {
             const queryParams = {returnUrl: state.url};
-            this.router.navigate([environment.accountPath, 'login'], {queryParams}).then();
+            this.router.navigate([ApiPath.login], {queryParams}).then();
             return false;
           }
         }),

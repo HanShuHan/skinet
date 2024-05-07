@@ -6,7 +6,7 @@ import {RegisterComponent} from './register/register.component';
 import {LoginComponent} from './login/login.component';
 import {ReactiveFormsModule} from "@angular/forms";
 import {ProfileComponent} from './profile/profile.component';
-import {InputTextComponent} from "../shared/input-text/input-text.component";
+import {InputTextComponent} from "../shared/components/input-text/input-text.component";
 import {SharedModule} from "../shared/shared.module";
 
 

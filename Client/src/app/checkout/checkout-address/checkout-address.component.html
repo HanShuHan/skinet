@@ -1,0 +1,61 @@
+<ng-container *ngIf="addressForm">
+
+  <div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+
+      <h4 class="form-title">Shipping Address</h4>
+
+      <button class="btn btn-outline-primary"
+              (click)="saveAddress()"
+              [disabled]="addressNotChanged()"
+      >Save as default address
+      </button>
+
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+
+      <button class="btn btn-outline-secondary" (click)="clearForm()">Clear</button>
+
+      <button class="btn btn-outline-secondary" (click)="restoreAddress()">Restore</button>
+
+    </div>
+
+    <div class="mt-4 row justify-content-between" [formGroup]="addressForm">
+
+      <app-input-text class="col-8"
+                      [type]="'text'"
+                      [abstractControl]="addressForm.controls['street']"
+                      [label]="'Street'"
+      />
+
+      <app-input-text class="col-4"
+                      [type]="'text'"
+                      [abstractControl]="addressForm.controls['city']"
+                      [label]="'City'"
+      />
+
+      <app-input-text class="col-4"
+                      [type]="'text'"
+                      [abstractControl]="addressForm.controls['state']"
+                      [label]="'State'"
+      />
+
+      <app-input-text class="col-4"
+                      [type]="'text'"
+                      [abstractControl]="addressForm.controls['country']"
+                      [label]="'country'"
+      />
+
+      <app-input-text class="col-4"
+                      [type]="'text'"
+                      [abstractControl]="addressForm.controls['zipCode']"
+                      [label]="'ZipCode'"
+      />
+
+    </div>
+
+  </div>
+
+</ng-container>
