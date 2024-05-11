@@ -1,24 +1,48 @@
 export class ApiUrl {
   // Base
-  static readonly base = 'https://localhost:5001/api/';
+  static readonly BASE = 'https://localhost:5001/api';
   // Account
-  static readonly account = this.base + 'account/';
-  static readonly login = this.account + 'login/';
-  static readonly register = this.account + 'register/';
-  static readonly checkEmailNotInUse = this.account + 'emailNotInUse/';
-  static readonly address = this.account + 'address/';
+  static readonly ACCOUNT = this.BASE + '/account';
+  static readonly LOGIN = this.ACCOUNT + '/login';
+  static readonly REGISTER = this.ACCOUNT + '/register';
+  static readonly CHECK_EMAIL_NOT_IN_USE = this.ACCOUNT + '/emailNotInUse';
+  static readonly ADDRESS = this.ACCOUNT + '/address';
   // Shop
-  static readonly shop = this.base + 'shop/';
-  static readonly products = this.base + 'products/';
-  static readonly basket = this.base + 'basket/';
-  static readonly orders = this.base + 'orders/';
-  static readonly deliveryMethods = this.orders + 'deliveryMethods/';
+  static readonly SHOP = this.BASE + '/shop';
+  static readonly PRODUCTS = this.BASE + '/products';
+  static readonly TAX_RATE = this.PRODUCTS + '/taxRate';
+  static readonly BASKET = this.BASE + '/basket';
+  static readonly ORDERS = this.BASE + '/orders';
+  static readonly DELIVERY_METHODS = this.ORDERS + '/deliveryMethods';
   // Checkout
-  static readonly checkout = this.base + 'checkout/';
+  static readonly CHECKOUT = this.BASE + '/checkout';
 }
 
-export class ApiPath {
-  static readonly shop = '/shop';
-  static readonly login = '/account/login';
-  static readonly checkoutOrder = '/checkout/order';
+export class Route {
+  // Account
+  static readonly ACCOUNT = 'account';
+  static readonly REGISTER = 'register';
+  static readonly LOGIN = 'login';
+  static readonly PROFILE = 'account-profile';
+  //
+  static readonly SHOP = 'shop';
+  static readonly BASKET = 'basket';
+  static readonly CHECKOUT = 'checkout';
+  static readonly SUCCESS = 'success';
+  static readonly ORDERS = 'orders';
+}
+
+export class Path {
+  // Account
+  static readonly ACCOUNT = '/' + Route.ACCOUNT;
+  static readonly REGISTER = '/' + Route.ACCOUNT + '/' + Route.REGISTER;
+  static readonly LOGIN = '/' + Route.ACCOUNT + '/' + Route.LOGIN;
+  static readonly PROFILE = '/' + Route.ACCOUNT + '/' + Route.PROFILE;
+  //
+  static readonly SHOP = '/' + Route.SHOP;
+  static readonly BASKET = '/' + Route.BASKET;
+  static readonly CHECKOUT = '/' + Route.CHECKOUT;
+  static readonly SUCCESS = '/' + Route.SUCCESS;
+  static readonly CHECKOUT_SUCCESS = '/' + Route.CHECKOUT + '/' + Route.SUCCESS;
+  static readonly ORDERS = '/' + Route.ORDERS;
 }

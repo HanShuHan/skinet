@@ -3,6 +3,7 @@ using API.Dtos.Store.Product;
 using API.Errors;
 using API.Helpers;
 using AutoMapper;
+using Core;
 using Core.Entities.ProductAggregate;
 using Core.Interfaces;
 using Core.Specifications;
@@ -21,6 +22,13 @@ namespace API.Controllers
             _productService = productService;
         }
 
+        [HttpGet("taxRate")]
+        [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
+        public ActionResult<decimal> GetTaxRate()
+        {
+            return Ok(IConstants.TaxRate);
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(IReadOnlyList<ProductToReturnDto>), StatusCodes.Status200OK,
             MediaTypeNames.Application.Json)]
@@ -32,14 +40,17 @@ namespace API.Controllers
             var products = await _productService.GetProductsWithBrandsAndTypesAsync(specificationParams);
             var productDtos = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
             var paging =
-                new Pagination<ProductToReturnDto>(specificationParams.PageIndex, specificationParams.PageSize, count, productDtos);
+                new Pagination<ProductToReturnDto>(specificationParams.PageIndex, specificationParams.PageSize, count,
+                    productDtos);
 
             return Ok(paging);
         }
-        
+
         [HttpGet("{ids}")]
-        [ProducesResponseType(typeof(Pagination<ProductToReturnDto>), StatusCodes.Status200OK, MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(ApiValidationErrorResponse), StatusCodes.Status400BadRequest, MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(Pagination<ProductToReturnDto>), StatusCodes.Status200OK,
+            MediaTypeNames.Application.Json)]
+        [ProducesResponseType(typeof(ApiValidationErrorResponse), StatusCodes.Status400BadRequest,
+            MediaTypeNames.Application.Json)]
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProductsByIds([FromRoute] string ids)
         {
             try
@@ -48,11 +59,13 @@ namespace API.Controllers
                     .Select(int.Parse)
                     .ToList();
                 var products = await _productService.GetProductsByIdsAsync(idList);
-                var paging = new Pagination<ProductToReturnDto>(ProductsSpecificationParams.DefaultPageIndex, ProductsSpecificationParams.DefaultMaxPageSize, products.Count, _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
-                
+                var paging = new Pagination<ProductToReturnDto>(ProductsSpecificationParams.DefaultPageIndex,
+                    ProductsSpecificationParams.DefaultMaxPageSize, products.Count,
+                    _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products));
+
                 return Ok(paging);
             }
-            catch (FormatException  e)
+            catch (FormatException e)
             {
                 return BadRequest(new ApiValidationErrorResponse(e.ToString(), "Ids should be integer"));
             }

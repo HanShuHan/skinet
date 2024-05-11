@@ -18,7 +18,7 @@ export class TestErrorComponent {
   get400BadRequestError() {
     const id = 'ABC';
 
-    this.http.get(ApiUrl.products + id).subscribe({
+    this.http.get(ApiUrl.PRODUCTS + id).subscribe({
       error: err => {
         console.log(err);
         if (err.errors) {
@@ -31,19 +31,19 @@ export class TestErrorComponent {
   get404ProductNotFoundError() {
     const id = 999;
 
-    this.http.get(ApiUrl.products + id).subscribe({
+    this.http.get(ApiUrl.PRODUCTS + id).subscribe({
       error: err => console.log(err)
     });
   }
 
   get404PageNotFoundError() {
-    this.http.get(ApiUrl.base + 'NoSuchService').subscribe({
+    this.http.get(ApiUrl.BASE + 'NoSuchService').subscribe({
       error: err => console.log(err)
     });
   }
 
   get500InternalServerError() {
-    this.http.get(ApiUrl.base + 'buggy/servererror').subscribe({
+    this.http.get(ApiUrl.BASE + 'buggy/servererror').subscribe({
       error: err => console.log(err)
     });
   }

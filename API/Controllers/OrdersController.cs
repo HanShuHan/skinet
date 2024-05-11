@@ -22,7 +22,7 @@ public class OrdersController : UserApiController
         _orderService = orderService;
         _mapper = mapper;
     }
-
+    
     [HttpPost]
     public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
     {
@@ -52,7 +52,7 @@ public class OrdersController : UserApiController
     }
 
     [HttpGet("{orderId}")]
-    public async Task<ActionResult<OrderToReturnDto>> GetOrderByUserIdAnOrderId(int orderId)
+    public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdAndUserId(int orderId)
     {
         var userId = GetCurrentUserId(HttpContext);
         var order = await _orderService.GetOrderByIdAndUserIdAsync(orderId, userId);

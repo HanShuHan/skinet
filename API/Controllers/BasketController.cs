@@ -1,4 +1,6 @@
+using System.Net;
 using API.Dtos.Store.Basket;
+using API.Errors;
 using AutoMapper;
 using Core.Entities.BasketAggregate;
 using Core.Interfaces;
@@ -10,45 +12,42 @@ public class BasketController : BaseApiController
 {
     private readonly IBasketRepository _basketRepository;
     private readonly IMapper _mapper;
-    private readonly IProductService _productService;
 
-    public BasketController(IBasketRepository basketRepository, IMapper mapper, IProductService productService)
+    public BasketController(IBasketRepository basketRepository, IMapper mapper)
     {
         _basketRepository = basketRepository;
         _mapper = mapper;
-        _productService = productService;
     }
-
+    
     [HttpGet]
     [Route("{id}")]
     public async Task<ActionResult<object>> GetBasket(string id)
     {
         var data = await _basketRepository.GetByIdAsync(id);
 
-        if (data == null)
-        {
-            return Ok(new SimpleBasket(id));
-        }
-
-        // var productIds = data.Items.Select(item => item.ProductId).ToList();
-        // var products = await _productService.GetProductsByIdsAsync(productIds);
-        //
-        // var basket = new List<BasketItemDto>();
-        // for (int i = 0; i < productIds.Count; i++)
-        // {
-        //     basket.Add(new BasketItemDto(products[i], data.Items[i].Quantity));
-        // }
-        // return Ok(basket);
-        
         return Ok(data);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<SimpleBasket>> CreateBasket()
+    {
+        var basket = await _basketRepository.CreateNewBasketByTrialsAsync(10);
+
+        return basket != null
+            ? Ok(basket)
+            : new ObjectResult(new ApiExceptionResponse(HttpStatusCode.InternalServerError, null,
+                "An error occurred when creating a new basket"));
     }
 
     [HttpPost]
     public async Task<ActionResult<SimpleBasket>> UpdateBasket(SimpleBasketDto basketDto)
     {
         var data = await _basketRepository.UpdateAsync(_mapper.Map<SimpleBasketDto, SimpleBasket>(basketDto));
-        // throw?
-        return Ok(data);
+
+        return data != null
+            ? Ok(data)
+            : new ObjectResult(new ApiExceptionResponse(HttpStatusCode.InternalServerError, null,
+                "An error occurred when updating the basket"));
     }
 
     [HttpDelete]

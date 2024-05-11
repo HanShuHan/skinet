@@ -1,10 +1,19 @@
+using Core.Entities.Identity;
+
 namespace Core.Entities.BasketAggregate;
 
 public class SimpleBasket
 {
-    public string Id { get; set; }
-
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public IReadOnlyList<SimpleBasketItem> Items { get; set; } = [];
+    
+    // Payments needed
+    public int? DeliveryMethodId { get; set; }
+    public Address ShippingAddress { get; set; }
+    
+    // for payments
+    public string PaymentIntentId { get; set; }
+    public string ClientSecret { get; set; }
 
     public SimpleBasket()
     {

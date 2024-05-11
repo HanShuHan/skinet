@@ -38,7 +38,7 @@ namespace Infrastructure.Data.Repositories
         public async Task<IReadOnlyList<T>> GetByIdsAsync(IEnumerable<int> ids)
         {
             return await _dbContext.Set<T>()
-                .Where(T => ids.Contains(T.Id))
+                .Where(entity => ids.Contains(entity.Id))
                 .ToListAsync();
         }
 

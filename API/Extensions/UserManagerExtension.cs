@@ -11,14 +11,14 @@ public static class UserManagerExtension
     public static async Task<AppUser> FindUserByClaimsPrincipalEmailAsync(this UserManager<AppUser> userManager,
         ClaimsPrincipal user)
     {
-        return await userManager.Users.Include(u => u.Address)
+        return await userManager.Users.Include(u => u.UserAddress)
             .FirstOrDefaultAsync(u => u.Email == user.FindFirstValue(ClaimTypes.Email));
     }
     
     public static async Task<AppUser> FindUserByEmailAsync(this UserManager<AppUser> userManager,
         string email)
     {
-        return await userManager.Users.Include(u => u.Address)
+        return await userManager.Users.Include(u => u.UserAddress)
             .FirstOrDefaultAsync(u => u.Email == email);
     }
 }

@@ -15,17 +15,17 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUser();
-    this.loadBasket();
+    this.loadLocalSimpleBasket();
   }
 
   private loadUser() {
     this.accountService.loadUserByLocalToken();
   }
 
-  private loadBasket() {
-    const basketId = localStorage.getItem(environment.basketId);
-    if (basketId != null) {
-      this.basketService.loadBasket(basketId);
+  private loadLocalSimpleBasket() {
+    const localSimpleBasketId = localStorage.getItem(environment.basketId);
+    if (localSimpleBasketId) {
+      this.basketService.loadLocalBasketById(localSimpleBasketId);
     }
   }
 

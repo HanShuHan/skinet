@@ -15,14 +15,30 @@ export interface User {
   email: string
   displayName: string
   phoneNumber: string
-  address: Address
+  address?: Address
   token: string
 }
 
-export interface Address {
-  street: string
-  city: string
-  state: string
-  zipCode: string
-  country: string
+export class Address {
+
+  street: string | null = null
+  city: string | null = null
+  state: string | null = null
+  zipCode: string | null = null
+  country: string | null = null
+
+  constructor() {
+  }
+
+  equals(address: Address) {
+    return (this.street === address.street)
+      && (this.city === address.city)
+      && (this.state === address.state)
+      && (this.zipCode === address.zipCode)
+      && (this.country === address.country);
+  }
+
+  static empty() {
+    return new Address();
+  }
 }

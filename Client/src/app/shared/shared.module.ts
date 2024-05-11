@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {PaginationModule} from "ngx-bootstrap/pagination";
 import {PagingHeaderComponent} from './components/paging-header/paging-header.component';
 import {
+  CurrencyPipe, DecimalPipe,
   JsonPipe,
   LowerCasePipe,
   NgClass,
@@ -18,6 +19,7 @@ import {InputTextComponent} from './components/input-text/input-text.component';
 import {StepperComponent} from './components/stepper/stepper.component';
 import {CdkStepperModule} from "@angular/cdk/stepper";
 import {RouterLink} from "@angular/router";
+import {OrderTotalsComponent} from "./components/order-totals/order-totals.component";
 
 
 @NgModule({
@@ -26,6 +28,7 @@ import {RouterLink} from "@angular/router";
     PagerComponent,
     InputTextComponent,
     StepperComponent,
+    OrderTotalsComponent
   ],
   imports: [
     PaginationModule.forRoot(),
@@ -41,7 +44,9 @@ import {RouterLink} from "@angular/router";
     NgTemplateOutlet,
     CdkStepperModule,
     RouterLink,
-    UpperCasePipe
+    UpperCasePipe,
+    CurrencyPipe,
+    DecimalPipe
   ],
   exports: [
     PagerComponent,
@@ -49,7 +54,8 @@ import {RouterLink} from "@angular/router";
     StepperComponent,
     PagingHeaderComponent,
     CarouselModule,
-    CdkStepperModule
+    CdkStepperModule,
+    OrderTotalsComponent
   ]
 })
 export class SharedModule {

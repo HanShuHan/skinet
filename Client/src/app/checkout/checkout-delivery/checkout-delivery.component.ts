@@ -3,6 +3,8 @@ import {FormGroup} from "@angular/forms";
 import {DeliveryMethod} from "../../shared/models/order";
 import {BasketService} from "../../basket/basket.service";
 import {CheckoutService} from "../checkout.service";
+import {take} from "rxjs";
+import {isNumeric} from "ngx-bootstrap/positioning/utils";
 
 @Component({
   selector: 'app-checkout-delivery',
@@ -18,6 +20,11 @@ export class CheckoutDeliveryComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadDeliveryMethods();
+    this.setDefaultMethodIdFromSimpleBasket();
+  }
+
+  private loadDeliveryMethods() {
     this.checkoutService.getDeliveryMethods()
       .subscribe({
         next: deliveryMethods => this.deliveryMethods = deliveryMethods,
@@ -25,10 +32,29 @@ export class CheckoutDeliveryComponent implements OnInit {
       })
   }
 
-  protected selectShippingMethod(id: number) {
-    const subtotal = this.basketService.getSubTotalsSource();
+  private setDefaultMethodIdFromSimpleBasket() {
+    this.basketService.simpleBasketSource$
+      .pipe(
+        take(1)
+      ).subscribe({
+      next: simpleBasket => {
+        if (simpleBasket?.deliveryMethodId) {
+          this.deliveryForm?.controls['deliveryMethod']?.patchValue(simpleBasket.deliveryMethodId.toString());
+        }
+      }
+    })
+  }
+
+  protected selectDeliveryMethod(id: number) {
+    this.updateSimpleBasketDeliveryMethodId(id);
+
+    const subtotal = this.basketService.getTotalsSource();
     if (subtotal) {
       subtotal.shipping = this.deliveryMethods?.find(dm => dm.id === id)?.price;
     }
+  }
+
+  private updateSimpleBasketDeliveryMethodId(id: number) {
+    this.basketService.updateSimpleBasketDeliveryMethodId(id);
   }
 }

@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {AccountService} from "../account.service";
 import {ActivatedRoute, Router} from "@angular/router";
+import {Path} from "../../../constants/api.constants";
 
 @Component({
   selector: 'app-login',
@@ -36,7 +37,7 @@ export class LoginComponent {
     if (returnUrl) {
       this.router.navigateByUrl(returnUrl).then();
     } else {
-      this.router.navigateByUrl('/shop').then();
+      this.router.navigateByUrl(Path.SHOP).then();
     }
   }
 

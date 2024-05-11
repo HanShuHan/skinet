@@ -4,12 +4,11 @@
 
     <app-stepper
       [firstStepPrevButtonLabel]="'Basket'"
-      [prevPageUrl]="basketPath"
+      [prevPageUrl]="Route.BASKET"
       [lastStepNextButtonLabel]="'Checkout'"
       [submitForm]="createOrder"
       (selectionChange)="onSelectionChanged($event)"
     >
-
       <cdk-step [label]="'Address'" [completed]="checkoutForm.controls['addressForm'].valid">
         <app-checkout-address [addressForm]="checkoutForm.controls['addressForm']"/>
       </cdk-step>
@@ -32,7 +31,12 @@
 
   <div class="col-4">
 
-    <app-basket-totals/>
+    <app-order-totals *ngIf="(basketService.totalsSource$ | async) as totals"
+                      [subtotal]="totals.subTotal"
+                      [tax]="totals.tax"
+                      [deliveryFee]="totals.shipping"
+                      [total]="totals.total"
+    />
 
   </div>
 

@@ -5,16 +5,17 @@ import {AccountRoutingModule} from './account-routing.module';
 import {RegisterComponent} from './register/register.component';
 import {LoginComponent} from './login/login.component';
 import {ReactiveFormsModule} from "@angular/forms";
-import {ProfileComponent} from './profile/profile.component';
-import {InputTextComponent} from "../shared/components/input-text/input-text.component";
+import {AccountProfileComponent} from './account-profile/account-profile.component';
 import {SharedModule} from "../shared/shared.module";
+import { AccountComponent } from './account.component';
 
 
 @NgModule({
   declarations: [
     RegisterComponent,
     LoginComponent,
-    ProfileComponent,
+    AccountProfileComponent,
+    AccountComponent,
   ],
   imports: [
     CommonModule,

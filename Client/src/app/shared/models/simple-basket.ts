@@ -1,10 +1,13 @@
-import * as  cuid from "cuid";
 import {Product} from "./product";
-import {TAX_RATE} from "../../../constants/number.constants";
+import {Address} from "./user";
 
-export class SimpleBasket {
-  id: string = cuid();
-  items: SimpleBasketItem[] = []
+export interface SimpleBasket {
+  id: string;
+  items: SimpleBasketItem[];
+  deliveryMethodId?: number;
+  shippingAddress?: Address;
+  paymentIntentId?: string;
+  clientSecret?: string;
 }
 
 export class SimpleBasketItem {
@@ -18,35 +21,39 @@ export class SimpleBasketItem {
   }
 }
 
-export interface BasketItem {
-  item: Product;
-  quantity: number
+export class Baskets {
+  private _simpleBasket: SimpleBasket;
+  private _productItems: Product[];
+
+  constructor(simpleBasket: SimpleBasket, productItems: Product[]) {
+    this._simpleBasket = simpleBasket;
+    this._productItems = productItems;
+  }
+
+  get simpleBasket(): SimpleBasket {
+    return this._simpleBasket;
+  }
+
+  get productItems(): Product[] {
+    return this._productItems;
+  }
 }
 
 export class BasketTotals {
 
-  private _subTotal: number = 0;
-  private _tax: number = 0;
-  private _shipping?: number | undefined;
-  private _total?: number | undefined;
+  private _subTotal: number;
+  private _tax: number;
+  private _shipping?: number;
+  private _total: number;
 
-  constructor(subTotal: number, shipping?: number) {
+  constructor(subTotal: number, taxRate: number) {
     this._subTotal = subTotal;
-    this._tax = subTotal * TAX_RATE;
-    if (shipping !== undefined) {
-      this._shipping = shipping;
-    }
-    this.calculateTotal();
+    this._tax = this._subTotal * taxRate;
+    this._total = this._subTotal + this._tax;
   }
 
   get subTotal() {
     return this._subTotal;
-  }
-
-  set subTotal(subtotal: number) {
-    this._subTotal = subtotal;
-    this._tax = subtotal * TAX_RATE;
-    this.calculateTotal();
   }
 
   get tax() {
@@ -59,15 +66,13 @@ export class BasketTotals {
 
   set shipping(shipping: number | undefined) {
     this._shipping = shipping;
-    this.calculateTotal();
+    if (shipping) {
+      this._total += shipping;
+    }
   }
 
-  get total(): number | undefined {
+  get total(): number {
     return this._total;
-  }
-
-  private calculateTotal() {
-    this._total = (this._shipping === undefined) ? (this._subTotal + this._tax) : (this._subTotal + this._tax + this._shipping);
   }
 
 }

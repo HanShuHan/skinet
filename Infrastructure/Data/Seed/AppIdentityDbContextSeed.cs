@@ -15,7 +15,7 @@ public static class AppIdentityDbContextSeed
                 Email = "bob@gmail.com",
                 DisplayName = "Bob",
                 PhoneNumber = "123456789",
-                Address = new Address
+                UserAddress = new UserAddress
                 {
                     Street = "10 street",
                     City = "New York",

@@ -19,12 +19,12 @@
                  id="{{deliveryMethod.id}}"
                  value="{{deliveryMethod.id}}"
                  formControlName="deliveryMethod"
-                 (change)="selectShippingMethod(deliveryMethod.id)"
+                 (change)="selectDeliveryMethod(deliveryMethod.id)"
           >
 
           <label class="ms-2" for="{{deliveryMethod.id}}">
 
-            <h5 class="text-purple-400">{{ deliveryMethod.name }}</h5>
+            <h5 class="text-purple-400">{{ deliveryMethod.name | uppercase }}</h5>
 
             <h6>Estimated: <span class="text-green-800">{{ deliveryMethod.approximatedDeliveryDays }}</span></h6>
 

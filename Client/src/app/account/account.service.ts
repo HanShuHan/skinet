@@ -19,15 +19,15 @@ export class AccountService {
   }
 
   register(registryForm: RegistryForm): Observable<User> {
-    return this.httpClient.post<User>(ApiUrl.register, registryForm);
+    return this.httpClient.post<User>(ApiUrl.REGISTER, registryForm);
   }
 
   login(loginForm: LoginForm): Observable<void> {
-    return this.httpClient.post<User>(ApiUrl.login, loginForm)
+    return this.httpClient.post<User>(ApiUrl.LOGIN, loginForm)
       .pipe(
         map(user => {
           if (user) {
-            this.updateUser(user);
+            this.updateCurrentUser(user);
           }
         })
       );
@@ -41,29 +41,31 @@ export class AccountService {
 
   checkEmailNotInUse(email: string): Observable<boolean> {
     const params = new HttpParams().set('email', email);
-    return this.httpClient.get<boolean>(ApiUrl.checkEmailNotInUse, {params});
+    return this.httpClient.get<boolean>(ApiUrl.CHECK_EMAIL_NOT_IN_USE, {params});
   }
 
   updateAddress(address: Address) {
-    return this.httpClient.put<Address>(ApiUrl.address, address);
+    return this.httpClient.put<Address>(ApiUrl.ADDRESS, address);
   }
 
   loadUserByLocalToken() {
     const userToken = localStorage.getItem(environment.token);
-
     if (userToken) {
-      const headers = new HttpHeaders().set('Authorization', `${environment.bearer} ${userToken}`);
-      this.httpClient.get<User>(ApiUrl.account, {headers})
-        .subscribe({
-          next: user => {
-            if (user) {
-              console.log(0)
-              this.updateUser(user);
-            }
-          },
-          error: err => console.log(err)
-        });
+      this.loadUserByToken(userToken);
     }
+  }
+
+  loadUserByToken(userToken: string) {
+    const headers = new HttpHeaders().set('Authorization', `${environment.bearer} ${userToken}`);
+    this.httpClient.get<User>(ApiUrl.ACCOUNT, {headers})
+      .subscribe({
+        next: user => {
+          if (user) {
+            this.updateCurrentUser(user);
+          }
+        },
+        error: err => console.log(err)
+      });
   }
 
   private setUserSource(user: User | null) {
@@ -74,7 +76,7 @@ export class AccountService {
     return this.userSource.value;
   }
 
-  updateUser(user: User) {
+  updateCurrentUser(user: User) {
     this.setUserSource(user);
     localStorage.setItem(environment.token, user.token);
   }

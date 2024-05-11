@@ -7,7 +7,7 @@
   <ul class="dropdown-menu dropdown-menu-right" *dropdownMenu role="menu">
 
     <li role="menuitem">
-      <a class="dropdown-item z-10" routerLink="/account">
+      <a class="dropdown-item z-10" [routerLink]="Path.PROFILE">
         <i class="fa fa-user me-4"></i> Profile
       </a>
     </li>
@@ -15,8 +15,16 @@
     <li class="dropdown-divider"></li>
 
     <li role="menuitem">
-      <a class="dropdown-item z-10" routerLink="/basket">
+      <a class="dropdown-item z-10" [routerLink]="Path.BASKET">
         <i class="fa fa-shopping-cart me-4"></i> Basket
+      </a>
+    </li>
+
+    <li class="dropdown-divider"></li>
+
+    <li role="menuitem">
+      <a class="dropdown-item z-10" [routerLink]="Path.ORDERS">
+        <i class="fa fa-th-list me-4"></i> Orders
       </a>
     </li>
 

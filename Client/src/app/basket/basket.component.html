@@ -1,4 +1,4 @@
-<ng-container *ngIf="(basketService.basketItemsSource$ | async) as basketItems; else noBasketItems">
+<ng-container *ngIf="(basketService.productItemsSource$ | async) as basketItems; else noBasketItems">
 
   <div class="container">
 
@@ -16,7 +16,12 @@
 
         <div class="col-6 offset-6">
 
-          <app-basket-totals/>
+          <app-order-totals *ngIf="(basketService.totalsSource$ | async) as totals"
+                            [subtotal]="totals.subTotal"
+                            [tax]="totals.tax"
+                            [deliveryFee]="totals.shipping"
+                            [total]="totals.total"
+          />
 
           <button class="btn btn-outline-success w-100 fs-4"
                   routerLink="/checkout"

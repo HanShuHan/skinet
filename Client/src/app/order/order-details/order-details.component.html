@@ -1,0 +1,25 @@
+<div class="row">
+
+  <div class="col-8">
+
+    <app-order-summary *ngIf="order"
+                       [order]="order"
+    />
+
+  </div>
+
+  <div class="col-4">
+
+    <app-order-totals *ngIf="order"
+                      [subtotal]="order.subtotal"
+                      [tax]="order.tax"
+                      [deliveryFee]="order.deliveryFee"
+                      [total]="order.total"
+    />
+
+  </div>
+
+</div>
+
+
+<app-order-summary/>

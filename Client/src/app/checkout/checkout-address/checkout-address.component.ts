@@ -1,8 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
 import {FormGroup} from "@angular/forms";
 import {AccountService} from "../../account/account.service";
 import {ToastrService} from "ngx-toastr";
 import {Address} from "../../shared/models/user";
+import {BasketService} from "../../basket/basket.service";
+import {BehaviorSubject, take} from "rxjs";
+import {IsEqual} from "../../shared/helpers/object-helper";
 
 @Component({
   selector: 'app-checkout-address',
@@ -12,52 +15,117 @@ import {Address} from "../../shared/models/user";
 export class CheckoutAddressComponent implements OnInit {
 
   @Input() addressForm?: FormGroup;
-  protected addressLoaded?: Address;
+  protected addressToBeRestored: Address = Address.empty();
+  protected isUpdatableSource = new BehaviorSubject<boolean | null>(null);
+  protected isUpdatableSource$ = this.isUpdatableSource.asObservable();
+  @ViewChild('updateButton') private updateButton?: ElementRef;
 
-  constructor(private accountService: AccountService, private toastrService: ToastrService) {
+  constructor(private accountService: AccountService, private toastrService: ToastrService, private basketService: BasketService) {
   }
 
   ngOnInit(): void {
     this.loadUserAddress();
+    this.setupIsUpdatableOnInit();
+    this.setupIsUpdatableOnFormChanges();
   }
 
   private loadUserAddress() {
-    const user = this.accountService.getCurrentUser();
-    if (user?.address) {
-      this.addressLoaded = user.address;
-      this.addressForm?.patchValue(user.address);
+    let address: Address | undefined;
+
+    this.basketService.simpleBasketSource$
+      .pipe(
+        take(1)
+      ).subscribe({
+      next: simpleBasket => {
+        if (simpleBasket?.shippingAddress) {
+          address = simpleBasket.shippingAddress;
+        }
+      }
+    });
+    this.accountService.userSource$
+      .pipe(
+        take(1)
+      ).subscribe({
+      next: user => {
+        if (!address && user?.address) {
+          address = user.address;
+        }
+      }
+    });
+
+    if (address) {
+      this.addressForm?.patchValue(address);
+      this.addressToBeRestored = address;
     }
+  }
+
+  private setupIsUpdatableOnInit() {
+    this.accountService.userSource$
+      .pipe(
+        take(1)
+      ).subscribe({
+      next: user => this.setIsUpdatableSource(
+        (!!this.addressForm?.valid) // form is valid
+        && (!!user?.address) // the user has address
+        && !IsEqual(this.addressForm.value, user.address)) // two addresses are not equal
+    });
+  }
+
+  private setupIsUpdatableOnFormChanges() {
+    this.addressForm?.valueChanges
+      .subscribe({
+        next: () => this.setupIsUpdatableOnInit()
+      })
+  }
+
+  private setIsUpdatableSource(updatable: boolean | null) {
+    this.isUpdatableSource.next(updatable);
   }
 
   protected saveAddress() {
-    if (this.addressForm?.valid && this.addressChanged()) {
-      this.accountService.updateAddress(this.addressForm?.value)
-        .subscribe({
-          next: address => {
-            if (address) {
-              this.addressLoaded = address;
-              this.accountService.getCurrentUser()!.address = address;
-              this.toastrService.success('', 'Address Update Success');
-            }
-          }
-        })
+    if (this.isUpdatableSource.value) {
+      this.updateUserAddress();
     }
   }
 
-  protected addressChanged() {
-    return JSON.stringify(this.addressLoaded) != JSON.stringify(this.addressForm?.value);
+  private updateUserAddress() {
+    if (this.addressForm?.value) {
+      this.accountService.updateAddress(this.addressForm.value)
+        .pipe(
+          take(1)
+        ).subscribe({
+          next: address => {
+            if (address) {
+              this.reloadUser();
+              this.addressToBeRestored = address;
+              // disable the update button
+              if (this.updateButton) {
+                this.updateButton.nativeElement.disabled = true;
+              }
+              this.toastrService.success('', 'Address Update Success');
+            }
+          },
+          error: err => console.log(err)
+        });
+    }
   }
 
-  protected addressNotChanged() {
-    return !this.addressChanged();
+  private reloadUser() {
+    this.accountService.userSource$
+      .pipe(
+        take(1)
+      ).subscribe({
+        next: user => {
+          const token = user?.token;
+          if (token) {
+            this.accountService.loadUserByToken(token);
+          }
+        }
+      })
   }
 
   protected restoreAddress() {
-    if (this.addressLoaded) {
-      this.addressForm?.patchValue(this.addressLoaded);
-    } else {
-      this.addressForm?.reset();
-    }
+    this.addressForm?.patchValue(this.addressToBeRestored);
   }
 
   protected clearForm() {

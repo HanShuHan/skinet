@@ -6,7 +6,7 @@ namespace Infrastructure.Data;
 
 public class AppIdentityDbContext : IdentityDbContext<AppUser>
 {
-    public DbSet<Address> Addresses { get; set; }
+    public DbSet<UserAddress> Addresses { get; set; }
 
     public AppIdentityDbContext(DbContextOptions<AppIdentityDbContext> options) : base(options)
     {
@@ -32,7 +32,7 @@ public class AppIdentityDbContext : IdentityDbContext<AppUser>
 
     private void CreateAddress(ModelBuilder builder)
     {
-        builder.Entity<Address>(address =>
+        builder.Entity<UserAddress>(address =>
         {
             address.Property(a => a.Street)
                 .IsRequired()
@@ -56,8 +56,8 @@ public class AppIdentityDbContext : IdentityDbContext<AppUser>
 
             // FK
             address.HasOne(a => a.AppUser)
-                .WithOne(u => u.Address)
-                .HasForeignKey<Address>(a => a.AppUserId)
+                .WithOne(u => u.UserAddress)
+                .HasForeignKey<UserAddress>(a => a.AppUserId)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
         });

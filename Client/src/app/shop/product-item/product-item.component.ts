@@ -15,7 +15,7 @@ export class ProductItemComponent {
   }
 
   addItemToBasket(product: Product) {
-    this.basketService.addItemToBasket(product);
+    this.basketService.addItemToBasket(1, this.product);
   }
 
 }

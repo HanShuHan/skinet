@@ -7,4 +7,5 @@ public interface IBasketRepository
      Task<SimpleBasket> GetByIdAsync(string id);
      Task<SimpleBasket> UpdateAsync(SimpleBasket basket);
      Task<bool> DeleteByIdAsync(string id);
+     Task<SimpleBasket> CreateNewBasketByTrialsAsync(int times);
 }

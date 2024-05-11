@@ -22,10 +22,12 @@ namespace API.Helpers
             CreateMap<Product, ProductToReturnDto>()
                 .ForMember(d => d.PictureUrl, o => o.MapFrom<ProductUrlResolver>());
 
-            CreateMap<Address, AddressDto>().ReverseMap();
+            CreateMap<UserAddress, AddressDto>().ReverseMap();
             
+            // Basket
             CreateMap<SimpleBasketDto, SimpleBasket>().ReverseMap();
             CreateMap<SimpleBasketItemDto, SimpleBasketItem>().ReverseMap();
+            CreateMap<AddressDto, Address>();
 
             // Order aggregate
             CreateMap<AddressDto, ShippingAddress>();

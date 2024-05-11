@@ -4,41 +4,45 @@ import {Product, ProductBrand, ProductType} from "../shared/models/product";
 import {Pagination} from "../shared/models/pagination";
 import {BehaviorSubject, Observable} from "rxjs";
 import {ProductParams} from "../shared/models/product-params";
-import {environment} from "../../environments/environment";
+import {ApiUrl} from "../../constants/api.constants";
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShopService {
 
-  private productsUrl: string = environment.apiUrl + environment.productsPath;
-  // Product brands and types' source
+  // Product brands
   private productBrandsSource = new BehaviorSubject<ProductBrand[]>([{id: 0, name: 'All'}]);
   productBrandsSource$ = this.productBrandsSource.asObservable();
+  // Product types
   private productTypesSource = new BehaviorSubject<ProductType[]>([{id: 0, name: 'All'}]);
   productTypesSource$ = this.productTypesSource.asObservable();
 
   constructor(private http: HttpClient) {
   }
 
+  public getTaxRate(): Observable<number> {
+    return this.http.get<number>(ApiUrl.TAX_RATE);
+  }
+
   public getProductById(id: number): Observable<Pagination<Product[]>> {
-    return this.http.get<Pagination<Product[]>>(this.productsUrl + id);
+    return this.http.get<Pagination<Product[]>>(ApiUrl.PRODUCTS + '/' + id);
   }
 
   public getProductsByIds(ids: number[]): Observable<Pagination<Product[]>> {
     const strIds = ids.join(',');
-    return this.http.get<Pagination<Product[]>>(this.productsUrl + strIds);
+    return this.http.get<Pagination<Product[]>>(ApiUrl.PRODUCTS + '/' + strIds);
   }
 
   public getProductsWithSpecs(productParams: ProductParams): Observable<Pagination<Product[]>> {
     const params = this.genHttpParams(productParams);
 
-    return this.http.get<Pagination<Product[]>>(this.productsUrl, {params: params});
+    return this.http.get<Pagination<Product[]>>(ApiUrl.PRODUCTS, {params: params});
   }
 
   public getProductBrands() {
     if (this.productBrandsSource.getValue().length === 1) {
-      this.http.get<ProductBrand[]>(this.productsUrl + 'brands')
+      this.http.get<ProductBrand[]>(ApiUrl.PRODUCTS + '/' + 'brands')
         .subscribe({
           next: productBrands => this.productBrandsSource.next([...this.productBrandsSource.getValue(), ...productBrands]),
           error: err => console.log(err)
@@ -48,7 +52,7 @@ export class ShopService {
 
   public getProductTypes() {
     if (this.productTypesSource.getValue().length === 1) {
-      this.http.get<ProductBrand[]>(this.productsUrl + 'types')
+      this.http.get<ProductBrand[]>(ApiUrl.PRODUCTS + '/' + 'types')
         .subscribe({
           next: productTypes => this.productTypesSource.next([...this.productTypesSource.getValue(), ...productTypes]),
           error: err => console.log(err)

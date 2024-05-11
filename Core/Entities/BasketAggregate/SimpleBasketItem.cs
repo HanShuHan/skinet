@@ -1,3 +1,5 @@
+using Core.Entities.ProductAggregate;
+
 namespace Core.Entities.BasketAggregate;
 
 public class SimpleBasketItem

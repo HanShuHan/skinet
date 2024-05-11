@@ -39,7 +39,7 @@ public class AccountController : BaseApiController
         if (user == null) return NotFound(new ApiResponse(HttpStatusCode.NotFound));
 
         return Ok(new UserDto(user.Email, user.DisplayName, user.PhoneNumber,
-            _mapper.Map<Address, AddressDto>(user.Address), _tokenService.CreateToken(user)));
+            _mapper.Map<UserAddress, AddressDto>(user.UserAddress), _tokenService.CreateToken(user)));
     }
 
     [HttpGet("emailNotInUse")]
@@ -58,9 +58,9 @@ public class AccountController : BaseApiController
 
         if (user == null) return NotFound(new ApiResponse(HttpStatusCode.NotFound));
 
-        if (user.Address == null) return NoContent();
+        if (user.UserAddress == null) return NoContent();
 
-        return Ok(_mapper.Map<Address, AddressDto>(user.Address));
+        return Ok(_mapper.Map<UserAddress, AddressDto>(user.UserAddress));
     }
 
     [Authorize]
@@ -71,11 +71,11 @@ public class AccountController : BaseApiController
 
         if (user == null) return NotFound(new ApiResponse(HttpStatusCode.NotFound));
 
-        user.Address = _mapper.Map<AddressDto, Address>(address);
+        user.UserAddress = _mapper.Map<AddressDto, UserAddress>(address);
         var result = await _userManager.UpdateAsync(user);
 
         return result.Succeeded
-            ? Ok(_mapper.Map<Address, AddressDto>(user.Address))
+            ? Ok(_mapper.Map<UserAddress, AddressDto>(user.UserAddress))
             : new ObjectResult(new ApiResponse(HttpStatusCode.InternalServerError));
     }
 
@@ -105,7 +105,7 @@ public class AccountController : BaseApiController
         }
 
         var token = new UserDto(user.Email, user.DisplayName, user.PhoneNumber,
-            _mapper.Map<Address, AddressDto>(user.Address), _tokenService.CreateToken(user));
+            _mapper.Map<UserAddress, AddressDto>(user.UserAddress), _tokenService.CreateToken(user));
         return Ok(token);
     }
 
@@ -129,7 +129,7 @@ public class AccountController : BaseApiController
             else
             {
                 var token = new UserDto(user.Email, user.DisplayName, user.PhoneNumber,
-                    _mapper.Map<Address, AddressDto>(user.Address), _tokenService.CreateToken(user));
+                    _mapper.Map<UserAddress, AddressDto>(user.UserAddress), _tokenService.CreateToken(user));
                 return Ok(token);
             }
         }

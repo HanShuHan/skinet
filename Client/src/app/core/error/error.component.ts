@@ -18,7 +18,7 @@ export class ErrorComponent {
     if (error) {
       this.error = error;
     } else {
-      this.router.navigateByUrl(ApiUrl.base).then();
+      this.router.navigateByUrl(ApiUrl.BASE).then();
     }
   }
 

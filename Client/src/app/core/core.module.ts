@@ -10,7 +10,7 @@ import {SectionHeaderComponent} from './section-header/section-header.component'
 import {BreadcrumbModule} from "xng-breadcrumb";
 import {NgxSpinnerModule} from "ngx-spinner";
 import {BsDropdownModule} from "ngx-bootstrap/dropdown";
-import { UserProfileTagComponent } from './user-profile-tag/user-profile-tag.component';
+import { AccountProfileTagComponent } from './account-profile-tag/account-profile-tag.component';
 
 
 @NgModule({
@@ -19,7 +19,7 @@ import { UserProfileTagComponent } from './user-profile-tag/user-profile-tag.com
     TestErrorComponent,
     ErrorComponent,
     SectionHeaderComponent,
-    UserProfileTagComponent,
+    AccountProfileTagComponent,
   ],
   imports: [
     NgIf,

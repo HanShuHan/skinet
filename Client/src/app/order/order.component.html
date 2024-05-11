@@ -1,0 +1,43 @@
+<table
+  *ngIf="(orderService.ordersSource$ | async) as orders; else noOrders"
+  class="border-bottom table table-hover cursor-pointer"
+>
+  <thead>
+
+  <tr>
+
+    <th>Order</th>
+
+    <th>Date</th>
+
+    <th>Total</th>
+
+    <th>Status</th>
+
+  </tr>
+
+  </thead>
+
+  <tbody>
+
+  <tr *ngFor="let order of orders" [routerLink]="Path.ORDERS + '/' + order.id">
+
+    <td># {{ order.id }}</td>
+
+    <td>{{ order.orderDate | date : 'long' }}</td>
+
+    <td>{{ order.total | currency : 'USD' : 'symbol' : '.1-2' }}</td>
+
+    <td>{{ order.orderStatus }}</td>
+
+  </tr>
+
+  </tbody>
+
+</table>
+
+<ng-template #noOrders>
+
+  <h2>You don't have any orders</h2>
+
+</ng-template>
