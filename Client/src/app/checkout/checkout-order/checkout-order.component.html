@@ -1,1 +1,13 @@
-<p>checkout-order works!</p>
+<div *ngIf="orderId">
+
+  <i class="fa fa-check-circle fa-2x text-success me-3"></i>
+
+  <h3 class="inline-flex">
+    Your new &nbsp;
+    <a [routerLink]="Path.ORDERS + '/' + orderId"
+       class="text-decoration-none text-blue-400"
+    >order</a>
+    &nbsp; is made
+  </h3>
+
+</div>

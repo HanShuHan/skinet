@@ -32,7 +32,7 @@
 
       <h5>Shipping</h5>
 
-      <h5>{{ (deliveryFee | currency : 'USD' : 'symbol' : '.1-2') || '-' }}</h5>
+      <h5>{{ (deliveryFee === undefined) ? '–' : (deliveryFee | currency : 'USD' : 'symbol' : '.1-2') }}</h5>
 
     </li>
 

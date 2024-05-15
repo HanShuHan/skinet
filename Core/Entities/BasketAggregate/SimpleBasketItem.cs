@@ -1,4 +1,4 @@
-using Core.Entities.ProductAggregate;
+using Core.Entities.BasketAggregate;
 
 namespace Core.Entities.BasketAggregate;
 

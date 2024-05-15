@@ -9,12 +9,12 @@
       [submitForm]="createOrder"
       (selectionChange)="onSelectionChanged($event)"
     >
-      <cdk-step [label]="'Address'" [completed]="checkoutForm.controls['addressForm'].valid">
-        <app-checkout-address [addressForm]="checkoutForm.controls['addressForm']"/>
+      <cdk-step [label]="'Address'" [completed]="addressForm.valid">
+        <app-checkout-address [addressForm]="addressForm"/>
       </cdk-step>
 
-      <cdk-step [label]="'Delivery'" [completed]="checkoutForm.controls['deliveryForm'].valid">
-        <app-checkout-delivery [deliveryForm]="checkoutForm.controls['deliveryForm']"/>
+      <cdk-step [label]="'Delivery'" [completed]="deliveryForm.valid">
+        <app-checkout-delivery [deliveryForm]="deliveryForm"/>
       </cdk-step>
 
       <cdk-step [label]="'Review'" [completed]="isReviewed">

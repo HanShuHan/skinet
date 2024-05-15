@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
+[Authorize]
 public class PaymentsController : BaseApiController
 {
     private readonly IPaymentService _paymentService;
@@ -22,24 +23,13 @@ public class PaymentsController : BaseApiController
     }
 
     [HttpPost("{basketId}")]
-    public async Task<ActionResult<SimpleBasket>> CreatePaymentIntent(string basketId)
+    public async Task<ActionResult<SimpleBasket>> CreateOrUpdatePaymentIntent(string basketId)
     {
-        var simpleBasket = await _paymentService.CreateOrUpdatePaymentIntent(basketId);
+        var user = await _userManager.FindUserByClaimsPrincipalEmailAsync(HttpContext.User);
+        var simpleBasket = await _paymentService.CreateOrUpdatePaymentIntent(basketId, user);
 
         return (simpleBasket == null)
             ? BadRequest(new ApiResponse(HttpStatusCode.BadRequest, null, "the basket cannot be found"))
             : Ok(simpleBasket);
-    }
-
-    [Authorize]
-    [HttpPut("{basketId}")]
-    public async Task<ActionResult<SimpleBasket>> UpdatePaymentIntent(string basketId)
-    {
-        var user = await _userManager.FindUserByClaimsPrincipalEmailAsync(HttpContext.User);
-        var updatedSimpleBasket = await _paymentService.CreateOrUpdatePaymentIntent(basketId, user);
-
-        return (updatedSimpleBasket == null)
-            ? BadRequest(new ApiResponse(HttpStatusCode.BadRequest, null, "the basket cannot be found"))
-            : Ok(updatedSimpleBasket);
     }
 }

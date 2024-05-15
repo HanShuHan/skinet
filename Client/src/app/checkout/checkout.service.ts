@@ -4,9 +4,9 @@ import {Observable} from "rxjs";
 import {DeliveryMethod, Order, OrderToCreate} from "../shared/models/order";
 import {ApiUrl, Path} from "../../constants/api.constants";
 import {BasketService} from "../basket/basket.service";
-import {Address} from "../shared/models/user";
 import {Router} from "@angular/router";
 import {ToastrService} from "ngx-toastr";
+import {SimpleBasket} from "../shared/models/SimpleBasket";
 
 @Injectable({
   providedIn: 'root'
@@ -20,15 +20,16 @@ export class CheckoutService {
     return this.httpClient.get<DeliveryMethod[]>(ApiUrl.DELIVERY_METHODS);
   }
 
-  createOrder(basketId: string, address: Address, deliveryMethodId: number) {
-    const orderDto = new OrderToCreate(basketId, address, deliveryMethodId);
+  createOrder() {
+    const simpleBasket = this.basketService.getSimpleBasketSource() as SimpleBasket;
+    const orderDto = new OrderToCreate(simpleBasket.id, simpleBasket.shippingAddress!, simpleBasket.deliveryMethodId!);
 
     this.httpClient.post<Order>(ApiUrl.ORDERS, orderDto)
       .subscribe({
         next: order => {
           this.basketService.deleteBasket();
           this.toastrService.success(`order id: ${order.id}`, 'A New Order Created');
-          this.router.navigateByUrl(Path.CHECKOUT_SUCCESS).then();
+          this.router.navigate([Path.CHECKOUT_SUCCESS], {queryParams: {orderId: order.id}}).then();
         },
         error: err => console.log(err)
       });

@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {OrderService} from "../order.service";
-import {ActivatedRoute, Router} from "@angular/router";
+import {ActivatedRoute, ActivatedRouteSnapshot, Router} from "@angular/router";
 import {Order} from "../../shared/models/order";
 import {Path} from "../../../constants/api.constants";
-import {isPositiveInteger} from "../../shared/helpers/numeric-helper";
 
 @Component({
   selector: 'app-order-details',

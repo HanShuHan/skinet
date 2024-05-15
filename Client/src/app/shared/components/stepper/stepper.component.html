@@ -35,14 +35,38 @@
 
     <button *ngIf="selectedIndex === 0; else prevStepButton"
             class="btn btn-outline-primary"
-            [routerLink]="prevPageUrl"
+            routerLink="/{{prevPageUrl}}"
     >
-      <i class="fa fa-arrow-left"></i> {{firstStepPrevButtonLabel}}
+      <i class="fa fa-arrow-left"></i> {{ firstStepPrevButtonLabel }}
     </button>
 
     <ng-template #prevStepButton>
       <button class="btn btn-outline-primary fa fa-arrow-left" cdkStepperPrevious></button>
     </ng-template>
+
+<!--    <ng-container [ngSwitch]="selectedIndex">-->
+
+<!--      <button *ngSwitchCase="2"-->
+<!--              class="btn btn-primary fa fa-arrow-right"-->
+<!--              cdkStepperNext-->
+<!--              disabled-->
+<!--              (click)="createOrUpdatePayment()"-->
+<!--      ></button>-->
+
+<!--      <button *ngSwitchCase="steps.length - 1"-->
+<!--              class="btn btn-primary"-->
+<!--              (click)="submitForm()"-->
+<!--      >-->
+<!--        {{ lastStepNextButtonLabel }} <i class="fa fa-arrow-right"></i>-->
+<!--      </button>-->
+
+<!--      <button *ngSwitchDefault-->
+<!--              class="btn btn-primary fa fa-arrow-right"-->
+<!--              cdkStepperNext-->
+<!--              [disabled]="!selected!.completed"-->
+<!--      ></button>-->
+
+<!--    </ng-container>-->
 
     <button *ngIf="selectedIndex < (steps.length - 1); else finalStepButton"
             class="btn btn-primary fa fa-arrow-right"

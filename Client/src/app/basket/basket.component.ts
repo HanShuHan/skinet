@@ -15,6 +15,7 @@ export class BasketComponent implements OnInit{
   ngOnInit(): void {
     this.shopService.getProductBrands();
     this.shopService.getProductTypes();
+    this.basketService.calculateTotals();
   }
 
 }

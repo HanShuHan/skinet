@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BasketService} from "../../basket/basket.service";
-import {SimpleBasketItem} from "../../shared/models/simple-basket";
+import {SimpleBasketItem} from "../../shared/models/SimpleBasket";
 import {AccountService} from "../../account/account.service";
 import {environment} from "../../../environments/environment";
 

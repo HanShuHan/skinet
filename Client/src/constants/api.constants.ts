@@ -12,6 +12,7 @@ export class ApiUrl {
   static readonly PRODUCTS = this.BASE + '/products';
   static readonly TAX_RATE = this.PRODUCTS + '/taxRate';
   static readonly BASKET = this.BASE + '/basket';
+  static readonly PAYMENTS = this.BASE + '/payments';
   static readonly ORDERS = this.BASE + '/orders';
   static readonly DELIVERY_METHODS = this.ORDERS + '/deliveryMethods';
   // Checkout

@@ -2,9 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {BasketService} from "../basket.service";
 import {ShopService} from "../../shop/shop.service";
 import {ProductBrand} from "../../shared/models/product";
-import {SimpleBasket, SimpleBasketItem} from "../../shared/models/simple-basket";
-import {MAX_QUANTITY} from "../../../constants/number.constants";
-import {getQuarter} from "ngx-bootstrap/chronos/units/quarter";
 
 @Component({
   selector: 'app-basket-summary',
@@ -33,18 +30,18 @@ export class BasketSummaryComponent implements OnInit {
   }
 
   decrementByOne(productId: number) {
-    this.basketService.decrement(1, productId);
+    this.basketService.decrementExistingItemById(1, productId);
   }
 
   incrementByOne(productId: number) {
-    this.basketService.increment(1, productId);
+    this.basketService.incrementExistingItemById(1, productId);
   }
 
-  deleteBasketItemById(id: number) {
+  deleteBasketItemByIndex(index: number) {
     const isConfirmed = confirm('Are you sure you want to remove the item?');
 
     if (isConfirmed) {
-      this.basketService.removeBasketItemByProductId(id);
+      this.basketService.removeBasketItemByIndex(index);
     }
   }
 

@@ -8,7 +8,8 @@ public class SimpleBasket
     public IReadOnlyList<SimpleBasketItem> Items { get; set; } = [];
     
     // Payments needed
-    public int? DeliveryMethodId { get; set; }
+    // public DeliveryMethod DeliveryMethod { get; set; }
+    public int? DeliveryMethodId { get; set; } 
     public Address ShippingAddress { get; set; }
     
     // for payments

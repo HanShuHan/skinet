@@ -4,7 +4,6 @@ import {DeliveryMethod} from "../../shared/models/order";
 import {BasketService} from "../../basket/basket.service";
 import {CheckoutService} from "../checkout.service";
 import {take} from "rxjs";
-import {isNumeric} from "ngx-bootstrap/positioning/utils";
 
 @Component({
   selector: 'app-checkout-delivery',
@@ -21,7 +20,7 @@ export class CheckoutDeliveryComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDeliveryMethods();
-    this.setDefaultMethodIdFromSimpleBasket();
+    this.setDefaultMethodId();
   }
 
   private loadDeliveryMethods() {
@@ -32,7 +31,7 @@ export class CheckoutDeliveryComponent implements OnInit {
       })
   }
 
-  private setDefaultMethodIdFromSimpleBasket() {
+  private setDefaultMethodId() {
     this.basketService.simpleBasketSource$
       .pipe(
         take(1)
@@ -46,15 +45,10 @@ export class CheckoutDeliveryComponent implements OnInit {
   }
 
   protected selectDeliveryMethod(id: number) {
-    this.updateSimpleBasketDeliveryMethodId(id);
+    const shippingFee = this.deliveryMethods!.find(deliveryMethod => deliveryMethod.id === id)!.price;
 
-    const subtotal = this.basketService.getTotalsSource();
-    if (subtotal) {
-      subtotal.shipping = this.deliveryMethods?.find(dm => dm.id === id)?.price;
-    }
+    this.basketService.updateDeliveryMethodId(id);
+    this.basketService.updateShippingFee(shippingFee);
   }
 
-  private updateSimpleBasketDeliveryMethodId(id: number) {
-    this.basketService.updateSimpleBasketDeliveryMethodId(id);
-  }
 }

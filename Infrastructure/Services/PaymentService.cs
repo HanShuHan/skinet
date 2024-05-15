@@ -1,3 +1,4 @@
+using Core;
 using Core.Entities.BasketAggregate;
 using Core.Entities.Identity;
 using Core.Entities.OrderAggregate;
@@ -24,7 +25,7 @@ public class PaymentService : IPaymentService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<SimpleBasket> CreateOrUpdatePaymentIntent(string basketId, AppUser user = null)
+    public async Task<SimpleBasket> CreateOrUpdatePaymentIntent(string basketId, AppUser user)
     {
         var basket = await _basketRepository.GetByIdAsync(basketId);
         if (basket == null)
@@ -32,9 +33,71 @@ public class PaymentService : IPaymentService
             return null;
         }
 
-        // Stripe config key setting
         StripeConfiguration.ApiKey = _config["StripeSettings:SecretKey"];
 
+        var amount = await CalculateAmount(basket);
+
+        if (basket.PaymentIntentId.IsNullOrEmpty())
+        {
+            var options = new PaymentIntentCreateOptions
+            {
+                Currency = "usd",
+                Amount = amount,
+                PaymentMethodTypes = ["card"],
+                ReceiptEmail = user.Email,
+                Shipping = new ChargeShippingOptions
+                {
+                    Name = user!.DisplayName ?? user.UserName,
+                    Address = new AddressOptions
+                    {
+                        Line1 = basket.ShippingAddress.Street,
+                        City = basket.ShippingAddress.City,
+                        State = basket.ShippingAddress.State,
+                        Country = basket.ShippingAddress.Country,
+                        PostalCode = basket.ShippingAddress.ZipCode,
+                    },
+                    Phone = !user.PhoneNumber.IsNullOrEmpty() ? user.PhoneNumber : null
+                }
+            };
+
+            // Create payment intent
+            var paymentIntent = await new PaymentIntentService().CreateAsync(options);
+
+            // update the basket
+            basket.PaymentIntentId = paymentIntent.Id;
+            basket.ClientSecret = paymentIntent.ClientSecret;
+            await _basketRepository.UpdateAsync(basket);
+        }
+        else
+        {
+            var options = new PaymentIntentUpdateOptions
+            {
+                Amount = amount,
+                ReceiptEmail = user.Email,
+                Shipping = new ChargeShippingOptions
+                {
+                    Name = user!.DisplayName ?? user.UserName,
+                    Address = new AddressOptions
+                    {
+                        Line1 = basket.ShippingAddress.Street,
+                        City = basket.ShippingAddress.City,
+                        State = basket.ShippingAddress.State,
+                        Country = basket.ShippingAddress.Country,
+                        PostalCode = basket.ShippingAddress.ZipCode,
+                    },
+                    Phone = !user.PhoneNumber.IsNullOrEmpty() ? user.PhoneNumber : null
+                }
+            };
+
+            // Update the payment intent
+            await new PaymentIntentService().UpdateAsync(basket.PaymentIntentId, options);
+        }
+
+        return basket;
+    }
+
+    private async Task<long> CalculateAmount(SimpleBasket basket)
+    {
         // Amount
         var amount = 0L;
         // total
@@ -44,73 +107,16 @@ public class PaymentService : IPaymentService
             amount += item.Quantity * (long)(product.Price * 100);
         }
 
-        // First creation
-        if (basket.PaymentIntentId == null)
+        // tax
+        amount += (long)(amount * IConstants.TaxRate);
+        // shipping fee
+        if (basket.DeliveryMethodId.HasValue)
         {
-            // Options
-            // base
-            var options = new PaymentIntentCreateOptions
-            {
-                Currency = "usd",
-                Amount = amount,
-                PaymentMethodTypes = ["card"] 
-            };
-
-            // Create payment intent
-            var paymentIntent = await new PaymentIntentService().CreateAsync(options);
-            // update the basket
-            basket.PaymentIntentId = paymentIntent.Id;
-            basket.ClientSecret = paymentIntent.ClientSecret;
-            await _basketRepository.UpdateAsync(basket);
-        }
-        // Updating or ready to checkout
-        else
-        {
-            // Amount
-            // shipping fee
-            if (basket.DeliveryMethodId.HasValue)
-            {
-                var deliveryMethod =
-                    await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(basket.DeliveryMethodId.Value);
-                amount += (long)(deliveryMethod.Price * 100);
-            }
-
-            // Options
-            // base
-            var options = new PaymentIntentUpdateOptions()
-            {
-                Amount = amount,
-            };
-            // user details
-            if (user != null)
-            {
-                options.Customer = user.DisplayName ?? user.UserName;
-                options.ReceiptEmail = user.Email;
-                if (!user.PhoneNumber.IsNullOrEmpty())
-                {
-                    options.Shipping.Phone = user.PhoneNumber;
-                }
-            }
-
-            // shipping address
-            var shippingAddress = basket.ShippingAddress;
-            if (shippingAddress != null)
-            {
-                options.Shipping.Address = new AddressOptions
-                {
-                    Line1 = shippingAddress.Street,
-                    City = shippingAddress.City,
-                    State = shippingAddress.State,
-                    Country = shippingAddress.Country,
-                    PostalCode = shippingAddress.ZipCode,
-                };
-            }
-
-            // Update the payment intent
-            await new PaymentIntentService().UpdateAsync(basket.PaymentIntentId, options);
+            var deliveryMethod =
+                await _unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(basket.DeliveryMethodId.Value);
+            amount += (long)(deliveryMethod.Price * 100);
         }
 
-        // return the basket
-        return basket;
+        return amount;
     }
 }

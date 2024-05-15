@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AccountService} from "../account.service";
-import {Router} from "@angular/router";
+import {ActivatedRouteSnapshot, Router} from "@angular/router";
 import {Path} from "../../../constants/api.constants";
 import {BreadcrumbService} from "xng-breadcrumb";
 

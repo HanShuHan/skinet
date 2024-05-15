@@ -4,7 +4,7 @@ import {ShopService} from "../shop.service";
 import {ActivatedRoute} from "@angular/router";
 import {BreadcrumbService} from "xng-breadcrumb";
 import {BasketService} from "../../basket/basket.service";
-import {SimpleBasketItem} from "../../shared/models/simple-basket";
+import {SimpleBasketItem} from "../../shared/models/SimpleBasket";
 import {MAX_QUANTITY} from "../../../constants/number.constants";
 
 @Component({

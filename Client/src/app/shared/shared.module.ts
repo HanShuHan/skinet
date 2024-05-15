@@ -7,7 +7,7 @@ import {
   LowerCasePipe,
   NgClass,
   NgForOf,
-  NgIf,
+  NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault,
   NgTemplateOutlet,
   TitleCasePipe,
   UpperCasePipe
@@ -46,7 +46,10 @@ import {OrderTotalsComponent} from "./components/order-totals/order-totals.compo
     RouterLink,
     UpperCasePipe,
     CurrencyPipe,
-    DecimalPipe
+    DecimalPipe,
+    NgSwitch,
+    NgSwitchCase,
+    NgSwitchDefault
   ],
   exports: [
     PagerComponent,

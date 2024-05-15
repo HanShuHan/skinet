@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators} from "@angular/forms";
 import {StepperSelectionEvent} from "@angular/cdk/stepper";
 import {Path, Route} from "../../constants/api.constants";
@@ -11,7 +11,7 @@ import {Address} from "../shared/models/user";
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent {
+export class CheckoutComponent implements OnInit {
 
   protected readonly Path = Path;
   protected readonly Route = Route;
@@ -31,8 +31,14 @@ export class CheckoutComponent {
       creditCardOwnerName: ['', [Validators.required]]
     })
   });
+  protected addressForm = this.checkoutForm.controls['addressForm'];
+  protected deliveryForm = this.checkoutForm.controls['deliveryForm'];
 
   constructor(private formBuilder: FormBuilder, private checkoutService: CheckoutService, protected basketService: BasketService) {
+  }
+
+  ngOnInit(): void {
+    this.basketService.calculateTotals();
   }
 
   onSelectionChanged($event: StepperSelectionEvent) {
@@ -42,7 +48,7 @@ export class CheckoutComponent {
 
   private updateSimpleBasketAddress($event: StepperSelectionEvent) {
     if ($event.previouslySelectedIndex === 0) {
-      this.basketService.updateSimpleBasketAddress(this.checkoutForm.controls["addressForm"].value as Address);
+      this.basketService.updateSimpleBasketAddress(this.addressForm.value as Address);
     }
   }
 
@@ -54,13 +60,11 @@ export class CheckoutComponent {
 
   get createOrder() {
     return () => {
-      const basketId = this.basketService.getSimpleBasketSource()?.id;
-      const address = this.checkoutForm.controls['addressForm'].value as Address;
-      const deliveryMethodId = parseInt(this.checkoutForm.controls['deliveryForm'].controls['deliveryMethod'].value as string);
-
-      if (basketId && this.checkoutForm.controls['addressForm'].valid && deliveryMethodId) {
-        this.checkoutService.createOrder(basketId, address, deliveryMethodId);
-      }
+      this.basketService.createOrUpdatePaymentIntent()
+        .subscribe({
+          next: () => this.checkoutService.createOrder(),
+          error: err => console.log(err)
+        });
     };
   }
 

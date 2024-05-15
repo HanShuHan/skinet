@@ -1,4 +1,3 @@
-import {Product} from "./product";
 import {Address} from "./user";
 
 export interface SimpleBasket {
@@ -21,24 +20,6 @@ export class SimpleBasketItem {
   }
 }
 
-export class Baskets {
-  private _simpleBasket: SimpleBasket;
-  private _productItems: Product[];
-
-  constructor(simpleBasket: SimpleBasket, productItems: Product[]) {
-    this._simpleBasket = simpleBasket;
-    this._productItems = productItems;
-  }
-
-  get simpleBasket(): SimpleBasket {
-    return this._simpleBasket;
-  }
-
-  get productItems(): Product[] {
-    return this._productItems;
-  }
-}
-
 export class BasketTotals {
 
   private _subTotal: number;
@@ -46,10 +27,14 @@ export class BasketTotals {
   private _shipping?: number;
   private _total: number;
 
-  constructor(subTotal: number, taxRate: number) {
+  constructor(subTotal: number, taxRate: number, shipping: number | undefined) {
     this._subTotal = subTotal;
     this._tax = this._subTotal * taxRate;
     this._total = this._subTotal + this._tax;
+    if (typeof shipping === 'number') {
+      this._shipping = shipping;
+      this._total += this._shipping;
+    }
   }
 
   get subTotal() {

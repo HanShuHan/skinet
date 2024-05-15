@@ -1,13 +1,15 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {BehaviorSubject} from "rxjs";
-import {Baskets, BasketTotals, SimpleBasket, SimpleBasketItem} from "../shared/models/simple-basket";
+import {BehaviorSubject, Observable} from "rxjs";
+import {BasketTotals, SimpleBasket, SimpleBasketItem} from "../shared/models/SimpleBasket";
 import {environment} from "../../environments/environment";
 import {ToastrService} from "ngx-toastr";
 import {Product} from "../shared/models/product";
 import {ShopService} from "../shop/shop.service";
 import {ApiUrl} from "../../constants/api.constants";
 import {Address} from "../shared/models/user";
+import {MAX_QUANTITY} from "../../constants/number.constants";
+import {DeliveryMethod} from "../shared/models/order";
 
 @Injectable({
   providedIn: 'root'
@@ -23,52 +25,34 @@ export class BasketService {
   // The basket's subtotals
   private totalsSource = new BehaviorSubject<BasketTotals | null>(null);
   totalsSource$ = this.totalsSource.asObservable();
-  // Error messages
-  private basketItemsNotMatchingErrorMessage: string = 'There is something wrong with the basket\nThe product information does not match the items in the basket';
 
   constructor(private httpClient: HttpClient, private shopService: ShopService, private toastrService: ToastrService) {
   }
 
-  addItemToBasket(quantity: number = 1, product: Product): void {
-    this.addItemAndUpdateBaskets(quantity, product);
+  addItemToBasket(quantity: number = 1, product: Product) {
+    this.addItemAndUpdateBasketSources(quantity, product);
   }
 
-  private addItemAndUpdateBaskets(quantity: number, product: Product) {
+  private addItemAndUpdateBasketSources(quantity: number, product: Product) {
     this.createBasketSourcesIfNull();
 
     //
     const copyOfSimpleBasket = this.copySimpleBasketSource() as SimpleBasket;
     const copyOfProductItems = this.copyProductItemsSource() as Product[];
     const copyOfBasketItems = copyOfSimpleBasket.items;
-
-    if (copyOfBasketItems.length !== copyOfProductItems.length) {
-      throw new Error(this.basketItemsNotMatchingErrorMessage);
-    }
-
-    //
     const copyOfExistingItem = copyOfBasketItems?.find(item => item.productId === product.id);
 
     if (copyOfBasketItems.length && copyOfExistingItem) {
       copyOfExistingItem.quantity += quantity;
     } else {
-      copyOfBasketItems.push(new SimpleBasketItem(product.id, quantity));
-      copyOfProductItems.push(product);
+      copyOfBasketItems.unshift(new SimpleBasketItem(product.id, quantity));
+      copyOfProductItems.unshift(product);
     }
-    this.updateBasketWith(copyOfSimpleBasket, copyOfProductItems);
+
+    this.updateBasketSourcesAndRecalculate(copyOfSimpleBasket, copyOfProductItems);
   }
 
-  private createBasketSourcesIfNull() {
-    this.createSimpleBasketIfNull()
-    this.createProductItemsIfNull();
-  }
-
-  private createProductItemsIfNull() {
-    if (!this.getProductItemsSource()) {
-      this.setProductItemsSource([]);
-    }
-  }
-
-  updateBasketWith(simpleBasket: SimpleBasket, productItems?: Product[]) {
+  updateBasketSourcesAndRecalculate(simpleBasket: SimpleBasket, productItems?: Product[]) {
     this.httpClient.post<SimpleBasket>(ApiUrl.BASKET, simpleBasket)
       .subscribe({
         next: updatedSimpleBasket => {
@@ -76,29 +60,27 @@ export class BasketService {
           if (productItems) {
             this.setProductItemsSource(productItems);
           }
-          this.calculateTotals(); // Todo:
+          this.calculateTotals();
         },
         error: err => console.log(err)
       });
   }
 
-  removeBasketItemByProductId(id: number): void {
-    if (this.hasNonEmptyValidBaskets()) {
-      const copyOfSimpleBasket = this.copySimpleBasketSource() as SimpleBasket;
-      const copyOfProductItems = this.copyProductItemsSource() as Product[];
+  removeBasketItemByIndex(index: number): void {
+    const copyOfSimpleBasket = this.copySimpleBasketSource();
+    const copyOfProductItems = this.copyProductItemsSource();
 
-      copyOfSimpleBasket.items.filter(item => item.productId !== id);
-      copyOfProductItems.filter(product => product.id !== id);
+    copyOfSimpleBasket.items.splice(index, 1);
+    copyOfProductItems.splice(index, 1);
 
-      this.updateBasketWith(copyOfSimpleBasket, copyOfProductItems);
-    }
+    this.updateBasketSourcesAndRecalculate(copyOfSimpleBasket, copyOfProductItems);
   }
 
   getSimpleBasketSource() {
     return this.simpleBasketSource.value;
   }
 
-  getProductItemsSource() {
+  private getProductItemsSource() {
     return this.productItemsSource.value;
   }
 
@@ -120,14 +102,15 @@ export class BasketService {
   }
 
   loadBasketProducts() {
-    const simpleBasketItems = this.getSimpleBasketSource()?.items;
-    if (simpleBasketItems?.length) {
+    const simpleBasketItems = this.getSimpleBasketSource()!.items;
+
+    if (simpleBasketItems.length) {
       const productIds = simpleBasketItems.map(item => item.productId);
+
       this.shopService.getProductsByIds(productIds)
         .subscribe({
           next: products => {
             this.setProductItemsSource(products.data);
-            this.calculateTotals();
           },
           error: err => console.log(err)
         });
@@ -141,7 +124,7 @@ export class BasketService {
     const basketItems = this.getProductItemsSource();
 
     if (basketId) {
-      this.httpClient.delete(ApiUrl.BASKET + basketId);
+      this.httpClient.delete(`${ApiUrl.BASKET}/${basketId}`);
     }
     if (localBasket) {
       localStorage.removeItem(environment.basketId);
@@ -154,23 +137,35 @@ export class BasketService {
     }
   }
 
-  calculateTotals(): void {
-    const simpleBasketItems = this.getSimpleBasketSource()?.items;
-    const productItems = this.getProductItemsSource();
-    if (simpleBasketItems?.length && productItems?.length && (simpleBasketItems.length === productItems.length)) {
-      let subtotal = 0;
-      for (let i = 0; i < simpleBasketItems.length; i++) {
-        subtotal += productItems[i].price * simpleBasketItems[i].quantity;
-      }
-      this.shopService.getTaxRate()
-        .subscribe({
-          next: taxRate => this.setTotalsSource(new BasketTotals(subtotal, taxRate)),
-          error: err => console.log(err)
-        })
-    }
+  getDeliveryMethodById(id: number): Observable<DeliveryMethod> {
+    return this.httpClient.get<DeliveryMethod>(`${ApiUrl.DELIVERY_METHODS}/${id}`);
   }
 
-  private setSimpleBasketSource(basket: SimpleBasket | null) {
+  calculateTotals(): void {
+    const simpleBasket = this.getSimpleBasketSource();
+    const simpleBasketItems = simpleBasket!.items;
+    const productItems = this.getProductItemsSource();
+    let subtotal = 0;
+    let shippingFee: number | undefined;
+
+    for (let i = 0; i < simpleBasketItems.length; i++) {
+      subtotal += productItems![i].price * simpleBasketItems[i].quantity;
+    }
+    if (simpleBasket?.deliveryMethodId) {
+      this.getDeliveryMethodById(simpleBasket.deliveryMethodId)
+        .subscribe({
+          next: deliveryMethod => shippingFee = deliveryMethod.price,
+          error: err => console.log(err)
+        });
+    }
+    this.shopService.getTaxRate()
+      .subscribe({
+        next: taxRate => this.setTotalsSource(new BasketTotals(subtotal, taxRate, shippingFee)),
+        error: err => console.log(err)
+      })
+  }
+
+  setSimpleBasketSource(basket: SimpleBasket | null) {
     this.simpleBasketSource.next(basket);
   }
 
@@ -178,7 +173,7 @@ export class BasketService {
     this.productItemsSource.next(products);
   }
 
-  getTotalsSource() {
+  private getTotalsSource() {
     return this.totalsSource.value;
   }
 
@@ -200,67 +195,25 @@ export class BasketService {
       });
   }
 
-  increment(quantity: number, productId: number) {
-    this.crea()
-
-    if (!this.hasNonEmptyValidBaskets()) {
-      throw Error(this.basketItemsNotMatchingErrorMessage);
-    }
-
-
-    const simpleBasket = this.getSimpleBasketSource();
-    const productItems = this.getProductItemsSource();
-
-    if (simpleBasket && productItems && (simpleBasket.items.length === productItems.length)) {
-
-    }
-  }
-
-  decrement(quantity: number, productId: number) {
-    const simpleBasket = this.getSimpleBasketSource();
-    const productItems = this.getProductItemsSource();
-
-    if (simpleBasket && productItems && (simpleBasket.items.length === productItems.length)) {
-
-    }
-  }
-
-  private hasNonEmptyValidBaskets() {
-    const simpleBasket = this.getSimpleBasketSource();
-    const productItems = this.getProductItemsSource();
-
-    return simpleBasket?.items.length
-      && productItems?.length
-      && (simpleBasket.items.length === productItems.length);
-  }
-
   private copySimpleBasketSource() {
-    const simpleBasketSource = this.getSimpleBasketSource();
-
-    return simpleBasketSource ? {...simpleBasketSource} : null;
+    return {...this.getSimpleBasketSource() as SimpleBasket};
   }
 
   private copyProductItemsSource() {
-    const productItemsSource = this.getProductItemsSource();
-
-    return productItemsSource ? [...productItemsSource] : null;
+    return [...this.getProductItemsSource() as Product[]];
   }
 
-  private copyBasketSources() {
-    const copyOfSimpleBasket = this.copySimpleBasketSource();
-    const copyOfProductItems = this.copyProductItemsSource();
-
-    return {copyOfSimpleBasket, copyOfProductItems};
-  }
-
-  updateSimpleBasketDeliveryMethodId(id: number) {
-    this.createSimpleBasketIfNull();
-
+  updateDeliveryMethodId(id: number) {
     const copyOfSimpleBasket = this.copySimpleBasketSource() as SimpleBasket;
 
     copyOfSimpleBasket.deliveryMethodId = id;
 
-    this.updateBasketWith(copyOfSimpleBasket);
+    this.updateBasketSources(copyOfSimpleBasket);
+  }
+
+  private createBasketSourcesIfNull() {
+    this.createSimpleBasketIfNull()
+    this.createProductItemsIfNull();
   }
 
   private createSimpleBasketIfNull() {
@@ -269,13 +222,57 @@ export class BasketService {
     }
   }
 
-  updateSimpleBasketAddress(address: Address) {
-    this.createSimpleBasketIfNull();
+  private createProductItemsIfNull() {
+    if (!this.getProductItemsSource()) {
+      this.setProductItemsSource([]);
+    }
+  }
 
+  updateSimpleBasketAddress(address: Address) {
     const copyOfSimpleBasket = this.copySimpleBasketSource() as SimpleBasket;
 
     copyOfSimpleBasket.shippingAddress = address;
 
-    this.updateBasketWith(copyOfSimpleBasket);
+    this.updateBasketSources(copyOfSimpleBasket);
   }
+
+  incrementExistingItemById(quantity: number, id: number) {
+    this.editExistingItemQuantityById(quantity, id);
+  }
+
+  decrementExistingItemById(quantity: number, id: number) {
+    this.editExistingItemQuantityById(-quantity, id);
+  }
+
+  editExistingItemQuantityById(quantity: number, id: number) {
+    const copyOfSimpleBasket = this.copySimpleBasketSource();
+    const copyOfExistingItem = copyOfSimpleBasket.items.find(item => item.productId === id) as SimpleBasketItem;
+
+    if (copyOfExistingItem.quantity + quantity > MAX_QUANTITY) {
+      copyOfExistingItem.quantity = MAX_QUANTITY;
+    } else if (copyOfExistingItem.quantity + quantity < 1) {
+      copyOfExistingItem.quantity = 1;
+    } else {
+      copyOfExistingItem.quantity += quantity;
+    }
+
+    this.updateBasketSourcesAndRecalculate(copyOfSimpleBasket);
+  }
+
+  updateShippingFee(shippingFee: number) {
+    this.getTotalsSource()!.shipping = shippingFee;
+  }
+
+  updateBasketSources(simpleBasket: SimpleBasket) {
+    this.httpClient.post<SimpleBasket>(ApiUrl.BASKET, simpleBasket)
+      .subscribe({
+        next: updatedSimpleBasket => this.setSimpleBasketSource(updatedSimpleBasket),
+        error: err => console.log(err)
+      });
+  }
+
+  createOrUpdatePaymentIntent() {
+    return this.httpClient.post<SimpleBasket>(`${ApiUrl.PAYMENTS}/${this.getSimpleBasketSource()!.id}`, null)
+  }
+
 }

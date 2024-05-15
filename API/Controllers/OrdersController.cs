@@ -65,7 +65,6 @@ public class OrdersController : UserApiController
         return Ok(_mapper.Map<Order, OrderToReturnDto>(order));
     }
 
-    // [AllowAnonymous]
     [HttpGet("deliveryMethods")]
     public async Task<ActionResult<IReadOnlyList<DeliveryMethodToReturnDto>>> GetDeliveryMethods()
     {
@@ -73,5 +72,15 @@ public class OrdersController : UserApiController
 
         return Ok(_mapper
             .Map<IReadOnlyList<DeliveryMethod>, IReadOnlyList<DeliveryMethodToReturnDto>>(deliveryMethods));
+    }
+    
+    [AllowAnonymous]
+    [HttpGet("deliveryMethods/{id}")]
+    public async Task<ActionResult<DeliveryMethodToReturnDto>> GetDeliveryMethodByIdy(int id)
+    {
+        var deliveryMethod = await _orderService.GetDeliveryMethodByIdAsync(id);
+
+        return Ok(_mapper
+            .Map<DeliveryMethod, DeliveryMethodToReturnDto>(deliveryMethod));
     }
 }
