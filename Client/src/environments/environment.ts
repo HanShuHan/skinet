@@ -23,6 +23,6 @@ export const environment = {
   basketId: 'basket_id',
   token: "token",
   bearer: 'Bearer',
-  passwordPattern: "(?=^.{6,10}$)(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&amp;*()_+}{&quot;:;'?/&gt;.&lt;,])(?!.*\\s).*$",
+  passwordPattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{6,10}$",
   phoneNumberPattern: '^\\D?(\\d{3})\\D?\\D?(\\d{3})\\D?(\\d{4})$'
 };
